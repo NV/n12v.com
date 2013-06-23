@@ -1,0 +1,427 @@
+@import "compass";
+@import "compass/css3/transition";
+
+// Main Section Colors
+$bg: #EEE !default;
+
+//$header-bg: #333 !default;
+//$header-border: lighten($header-bg, 15) !default;
+
+$text-color: #222 !default;
+$text-color-light: #aaa !default;
+
+$sans: Verdana, "Helvetica Neue", Arial, sans-serif !default;
+$serif: Georgia, Marion, Kefa, serif !default;
+$mono: Consolas, Menlo, monospace !default;
+
+$content-width: 600px;
+$gap: 45px;
+
+$padding-bottom: .75em;
+
+$base-size: 14px;
+
+$duration: 0.2s;
+$smooth-out: cubic-bezier(0,0,0,1);
+$smooth-in: cubic-bezier(0,0,1,0);
+
+* {
+  box-sizing: border-box;
+}
+
+html {}
+
+body {
+  font: 87.5%/1.5 $sans; // Stupid SASS dont understand $base-size/1.5
+  background: $bg;
+  color: $text-color;
+  tab-size: 2;
+
+  margin: 0;
+  position: relative;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $serif;
+  line-height: 1.2;
+}
+h2 {
+  font-size: 180%;
+  font-weight: normal;
+  margin: $padding-bottom 0 .5em;
+}
+h3 {
+  font-size: 145%;
+  font-weight: normal;
+  margin: $padding-bottom 0 .5em;
+}
+h4 {
+  font-size: 120%;
+  font-weight: normal;
+  margin: $padding-bottom 0 .5em;
+}
+
+p {
+  margin: 0 0 $padding-bottom;
+}
+
+samp {
+  //font-family: inherit;
+  font-size: inherit;
+}
+
+abbr {
+  letter-spacing: .1em;
+}
+
+code {
+  font-family: $mono;
+}
+
+table {
+  border-collapse: collapse;
+}
+th {
+  font-family: $serif;
+  text-align: left;
+  vertical-align: top;
+  padding-right: 1em;
+}
+td {
+  vertical-align: top;
+}
+pre {
+  margin: 0 0 $padding-bottom;
+  white-space: pre-wrap;
+}
+
+$link: rgb(14, 114, 206);
+$visited: rgb(143, 101, 160);
+$focus: #0085FF;
+
+a {
+  &:link {color: $link}
+  &:visited {color: $visited}
+  &:hover, &:focus {color: $focus}
+  &:active {color: $visited}
+}
+
+.row, article {
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+article {
+  background: $bg;
+}
+
+.note-right {
+  position: absolute;
+  left: 600px;
+}
+
+/* @extend this to force long lines of continuous text to wrap */
+.force-wrap {
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+
+$max-width: 1200px !default;
+
+// Padding used for layout margins
+$pad-min: 18px !default;
+$pad-narrow: 25px !default;
+$pad-medium: 35px !default;
+$pad-wide: 55px !default;
+
+// Sidebar widths used in media queries
+$sidebar-width-medium: 240px !default;
+$sidebar-pad-medium: 15px !default;
+$sidebar-pad-wide: 20px !default;
+$sidebar-width-wide: 300px !default;
+
+$indented-lists: false !default;
+
+$top-bg: #dadde7;
+$top-text-color: #162866;
+$top-text-color-light: mix($top-text-color, $top-bg);
+$top-link: mix($link, $top-bg);
+//$top-link-color: hsl(hue($link), $top-text-color, );
+
+#top {
+  font-family: $serif;
+  padding-top: .2em;
+  padding-bottom: .2em;
+  border-bottom: 1px solid #cbcfdd;
+  background: $top-bg;
+  color: $top-text-color;
+}
+
+.view-home {
+  #top {
+    //@include transition-duration($duration);
+    //@include transition-timing-function(ease-out);
+    //@include transition-property('background-color, font-size, border-bottom-color');
+  }
+  #headline {
+    color: $top-text-color;
+    -webkit-transition: $duration linear color;
+  }
+  .entry-more {
+    //height: 0;
+    //@include transition-duration($duration);
+    //@include transition-timing-function(ease-in);
+    //@include transition-property('height');
+  }
+}
+
+.view-home-done .entry-more {
+  //height: 0;
+}
+
+#title {
+  text-decoration: none;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.entry-title {
+  font: 150%/1.2 $serif normal normal;
+  margin: 0;
+  padding-top: 24px;
+  padding-bottom: 12px;
+  vertical-align: top;
+  @include transition-property('font-size, line-height, padding');
+  @include transition-duration($duration);
+  @include transition-timing-function(ease-out);
+}
+.article-current .entry-title {
+  font-size: 250%;
+  padding: 32px 0;
+  // I hate CSS
+  //display: table-cell;
+  //vertical-align: middle;
+}
+
+.meta {
+  position: absolute;
+  left: $content-width + $gap;
+  font: 87.5% $serif;
+  //margin-top: 0;
+  padding-top: .3em;
+  color: #999;
+}
+
+.entry-link {
+  text-decoration: none;
+  border-bottom: 1px solid;
+  //@include transition(color $duration/2 linear, border-bottom-color $duration linear);
+
+  &:link {border-bottom-color: mix($link, $bg);}
+  &:visited {border-bottom-color: mix($visited, $bg);}
+  &:hover, &:focus {border-bottom-color: mix($focus, $bg);}
+  &:active {border-bottom-color: mix($visited, $bg);}
+}
+
+.wrap {
+  background: #ffffe0;
+  overflow: hidden;
+}
+
+.article-current {
+  .entry-title {
+    //font-size: 250%;
+    //padding-bottom: 32px;
+    //padding-top: 32px;
+  }
+  .entry-link {
+    border-bottom-color: $bg;
+  }
+}
+
+.height-before-collapsed {
+  max-height: 200px;
+}
+.height-collapse-transition {
+  @include transition(max-height $duration $smooth-out);
+}
+.height-expand-transition {
+  @include transition(max-height $duration $smooth-in);
+}
+.height-collapsed {
+  max-height: 0;
+}
+
+.entry-more {
+  overflow: hidden;
+  height: 0;
+}
+
+// Make self-links look like regular text
+.article-current {
+  //background: hsl(48, 100%, 88%);
+
+  .entry-more {
+    height: auto;
+  }
+  .title {
+
+  }
+}
+
+.view-home #title,
+.article-current .entry-link {
+  color: $text-color;
+  cursor: auto;
+  pointer-events: none;
+}
+
+
+#top {
+  //background: $bg;
+  background: rgb(218, 221, 231); //rgb(64, 74, 111);
+  border-bottom-color: rgb(203, 207, 221);
+}
+#headline {
+  color: $top-bg;
+}
+#about {
+  display: none;
+
+  //&, & a {
+  //  color: $bg;
+  //}
+}
+.wrap {
+  //height: 0;
+}
+
+.view-home {
+  #top {
+    font-size: 150%;
+    //max-height: 99em;
+  }
+  #about {
+    display: block;
+  }
+}
+
+.view-page-done {
+  //.wrap,
+  article:not(.article-current) {
+    height: 0;
+    border-bottom-width: 0;
+  }
+  #headline {
+    display: none;
+  }
+}
+
+p, li, pre {
+  max-width: $content-width;
+}
+
+article {
+  //-webkit-transition: height 1s linear;
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid #CCC;
+}
+//.view-page article:not(.article-current) {
+//  height: 0;
+//  border-bottom-width: 0;
+//}
+
+.shell-prompt:before,
+.terminal code:before {
+  content: '$ ';
+  color: #999;
+}
+
+
+#about {
+  //height: auto;
+  //max-height: 999px;
+  color: $top-text-color-light;
+  overflow: hidden;
+  font-size: 75%;
+}
+#about,
+#about li {
+  margin-left: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+#about li {
+  display: inline-block;
+  margin-right: 12px;
+}
+#services {
+  margin: 0;
+  padding: 0;
+}
+
+#me {
+  del {display: none}
+}
+
+.entry-excerpt {
+  //margin-left: 18px;
+}
+.entry-more {
+
+
+  p, ul, ol, dl, table, pre {
+    margin-left: 24px;
+  }
+}
+
+
+//@media only screen and (min-width: 1000px) {
+//  html {font-size: 17px}
+//}
+//@media only screen and (min-width: 1400px) {
+//  html {font-size: 18px}
+//}
+@media (max-width: 400px) {
+//* {color: red}
+}
+
+// iPhone retina
+// (width <= 570px) and (pixel-ratio >= 1.5)
+@media (max-width: 570px) {
+  article {
+    padding-left: .5em;
+  }
+  .entry-excerpt {
+    margin-left: 4px;
+  }
+  .entry-more {
+    p, ul, ol, dl, table, pre {
+      margin-left: 6px;
+    }
+  }
+}
+
+//@media (max-width: 700px) {
+//  * {color: green}
+//  p, li, pre {
+//    max-width: 500px;
+//  }
+//}
+
+
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+only screen and (-o-min-device-pixel-ratio: 3/2),
+only screen and (min-device-pixel-ratio: 1.5) {
+  html {
+    font-size: 10px;
+  }
+}

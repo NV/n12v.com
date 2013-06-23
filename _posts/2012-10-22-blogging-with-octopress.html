@@ -1,0 +1,106 @@
+---
+layout: post
+title: "Blogging with Octopress"
+date: 2012-10-22 14:38
+comments: true
+---
+
+<p>After a month of designing and coding I finally rolling out my blog. I built a brand new blog theme for <a href="http://octopress.org/">Octopress</a>. It uses <a href="https://developer.mozilla.org/en-US/docs/DOM/Manipulating_the_browser_history#Adding_and_modifying_history_entries"><abbr>HTML5</abbr> History <abbr>API</abbr></a> to do smooth navigation between a home page and posts.</p>
+<p>So, how does it work?</p>
+<style>
+.highlight {
+  cursor: default;
+}
+code.highlight {
+  display: inline-block;
+  /*outline-width: 4px;*/
+  /*outline-style: solid;*/
+}
+.highlight-on {
+}
+.highlight__entry-link {
+  color: hsl(24, 100%, 26%);
+  background: hsl(37, 100%, 94%);
+  outline-color: hsl(37, 100%, 94%);
+}
+.highlight__entry-link.highlight-on:not(:hover) {
+  color: hsl(0, 100%, 42%);
+  background: hsl(57, 100%, 78%);
+  outline: 2px solid hsl(57, 100%, 78%);
+  position: relative;
+  top: -1px;
+}
+.highlight__entry-more {
+  color: hsl(86, 100%, 14%);
+  background: hsl(86, 45%, 89%);
+  outline-color: hsl(86, 45%, 89%);
+}
+.highlight__entry-more.highlight-on {
+  background: hsl(82, 100%, 84%);
+  outline-color: hsl(82, 100%, 84%);
+}
+.highlight__path {
+  background-color: transparent;
+  color: hsl(266, 100%, 29%);
+  border-bottom: 1px dashed hsl(266, 37%, 82%);
+}
+.highlight__path.highlight-on {
+  color: hsl(266, 100%, 50%);
+  border-bottom-color: hsl(266, 100%, 50%);
+}
+</style>
+<script>
+<!--
+(function(){
+  function extractClassName(element) {
+    return element.className.match(/\bhighlight__[\w-]+/)[0];
+  }
+
+  var root = $(document.getElementById('article:/blogging-with-octopress') || 'body');
+  root.on('mouseenter', '.highlight', function() {
+    var className = extractClassName(this);
+    $('.' + className).addClass('highlight-on');
+  }).on('mouseleave', '.highlight', function() {
+    var className = extractClassName(this);
+    $('.' + className).removeClass('highlight-on');
+  });
+
+})();
+-->
+</script>
+<pre><code class="highlight highlight__entry-link">&lt;a class="entry-link" href="<mark class="highlight highlight__path">/blogging-with-octopress</mark>"&gt;
+  Blogging with Octopress
+&lt;/a&gt;</code>
+<code class="highlight highlight__entry-more">&lt;div class="entry-more" id="article:<mark class="highlight highlight__path">/blogging-with-octopress</mark>"&gt;&lt;/div&gt;</code></pre>
+<p>When I open a home page and click an article link it gets intercepted by JS:</p>
+<pre><code>$(window).on('click', <mark class="highlight highlight__entry-link">'.entry-link'</mark>, function(e) {
+  e.preventDefault()
+  var <mark class="highlight highlight__path">path</mark> = <mark class="highlight highlight__path">this.pathname</mark>
+  $.get(<mark class="highlight highlight__path">path</mark> + '<a href="/blogging-with-octopress/raw.html">raw.html</a>')
+    .done(function(data) {
+      <mark class="highlight highlight__entry-more">$('#article:' + <mark class="highlight highlight__path">path</mark>)</mark>.html(data)
+    })
+    .fail(function() {
+      location.assign(<mark class="highlight highlight__path">path</mark>)
+    });
+  })
+</code></pre>
+<p>The actual code is slightly more modular and harder to read.</p>
+<p>I tried <a href="https://github.com/defunkt/jquery-pjax"><abbr>PJAX</abbr></a> but ended up not using it:</p>
+## Octopress
+
+[Octopress](http://octopress.org/) is a static blog engine. Basically, It’s just [Jekyll](https://github.com/mojombo/jekyll), another static blog generator, plus layout theme and few [plugins](http://octopress.org/docs/blogging/plugins/).
+
+So, why Octopress?
+
+Write posts in markdown or HTML
+
+
+What blog engine should I use? I focused on static blog generators to simplify hostring. Still, there is quite a lot of them.
+
+I tried Octopress first. It uses [Liquid templates](http://liquidmarkup.org/) which I’m not happy with.
+
+I tried [Middleman](http://middlemanapp.com/). I
+
+
+https://www.ruby-toolbox.com/categories/Blog_Engines

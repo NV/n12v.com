@@ -1,0 +1,25 @@
+name: Nikita Vasilyev
+author: Nikita Vasilyev
+
+pygments: false
+
+permalink: /:title
+
+excerpt_separator: '<!-- more -->'
+
+asset_bundler:
+  compress:
+    js: java -jar ~/closure/latest.jar --js :infile --js_output_file :outfile
+    css: false
+  base_path: /bundles/
+  cdn:
+  remove_bundled: false
+  dev: false
+
+asset_pipeline:
+  bundle: false            # Default = true
+  compress: false          # Default = true
+  output_path: assets     # Default = assets
+#  display_path: nil
+#  gzip: false
+#  dev: false

@@ -1,0 +1,78 @@
+---
+layout: post
+title: "How to setup local hosts on Mac OS X"
+date: 2012-10-19 20:37
+comments: true
+categories:
+---
+
+<p>When I develop this website locally I use <nobr>nikita-vasilyev.dev</nobr> virtual host. <nobr>nikita-vasilyev.dev/index.html</nobr> is just ~/Sites/<nobr>nikita-vasilyev.com</nobr>/public/index.html on the file system.</p>
+<p>You can achieve this by either using Pow or <nobr>/etc/hosts</nobr> and Apache.</p>
+<!-- more -->
+<h2>The easy way: <a href="http://pow.cx/">Pow</a></h2>
+  <h3>Install</h3>
+  <pre class="terminal"><code>curl get.pow.cx | sh</code></pre>
+  <h3>Use</h3>
+  <pre class="terminal"><code>ln -s ~/Sites/nikita-vasilyev.com ~/.pow/nikita-vasilyev</code></pre>
+  <p>Now nikita-vasilyev.dev serves index.html.</p>
+  <p>You can also serve a directory that is not public:</p>
+  <pre class="terminal"><code>mkdir ~/.pow/usercss</code>
+<code>ln -s ~/Sites/usercss/www ~/.pow/usercss/public</code></pre>
+<table class="_pow-table">
+  <tr><th>Install</th><td></td></tr>
+  <tr><th>Use</th><td>
+</table><style>._pow-table {}
+._pow-table th, ._pow-table td {vertical-align: top; text-align: left; }
+._pow-table tr + tr th,
+._pow-table tr + tr td {padding-top: 1em}</style>
+<h2>The hard way: /etc/hosts and Apache</h2>
+<p>Open /etc/hosts in <a href="http://www.sublimetext.com/">Sublime</a> or your favourite text editor and add:</p>
+
+<pre><code>127.0.0.1	nikita-vasilyev.dev
+fe80::1%lo0	nikita-vasilyev.dev</code></pre>
+<p><code>fe80::1%lo0</code> is an IPv6 address. Without it your local site would <a href="http://serverfault.com/questions/321386/resolving-to-virtual-host-very-slow-on-mac-os-x-lion">run too slow</a>.</p>
+<p>Check if it works correctly:</p>
+<pre class="terminal"><code>ping nikita-vasilyev.dev
+PING nikita-vasilyev.dev (127.0.0.1): 56 data bytes
+64 bytes from 127.0.0.1: icmp_seq=0 ttl=64 time=0.040 ms
+64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.071 ms
+</code></pre>
+<p>Press <kbd>Ctrl</kbd> <kbd>C</kbd> to stop it. If you see <code>ping: cannot resolve nikita-vasilyev.dev: Unknown host</code> then run</p>
+<pre class="terminal"><code class="shell-prompt">sudo dscacheutil -flushcache</code></pre>
+<h3>Apache</h3>
+<p>Mac OS X Mountain Lion ships with Apache 2.2.22. You don’t need it install it.</p>
+<p>Open /etc/apache2/extra/httpd-vhosts.conf and add the following code to the bottom</p>
+<pre><code>&lt;VirtualHost *:80&gt;
+  ServerName nikita-vasilyev.dev
+  DocumentRoot /Users/nv/Sites/nikita-vasilyev.com/public
+  ErrorLog /Users/nv/Sites/nikita-vasilyev.com/error.log
+  CustomLog /Users/nv/Sites/nikita-vasilyev.com/access.log common
+&lt;/VirtualHost&gt;</code></pre>
+<p>Check if you haven’t made any typos:</p>
+<pre><code class="shell-prompt">apachectl configtest
+Syntax OK</code></pre>
+<p>Restart Apache:</p>
+<pre class="terminal"><code class="shell-prompt">sudo apachectl restart</code></pre>
+<p>That’s it. http://nikita-vasilyev.dev should serve ~/Sites/nikita-vasilyev.com/public/index.html</p>
+<h3>Troubleshooting</h3>
+<h4>500 Internal Server Error</h4>
+<ol>
+  <li>Open /etc/apache2/httpd.conf</li>
+  <li>Find <code>&lt;Directory "/Library/WebServer/Documents"&gt;</code> section</li>
+  <li>Replace
+<pre><code>  Order deny,allow
+  Deny from all</code></pre>
+    with
+<pre><code>  Order allow,deny
+  Allow from all</code></pre></li>
+  <li>Set DocumentRoot to /Users/nv/Sites</li>
+</ol>
+<h2>Why not just use `file://`?</h2>
+<p>When your website consists only of HTML files you can just open them in the browser. It works well until you have:</p>
+<ol>
+  <li>URLs relative to root, e.g. "/foo"</li>
+  <li>AJAX requests, localStorage, AppCache.</li>
+</ol>
+<h4>References</h4>
+- http://remysharp.com/2007/01/06/how-to-setup-your-mac-web-development-environment/
+

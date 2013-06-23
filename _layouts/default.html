@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
+  <meta name="author" content="{{ site.author }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/favicon-cube-2.png" rel="icon">
+  <!--<link rel="stylesheet" href="/css/syntax.css">-->
+  <!--<link rel="stylesheet" href="/css/main.css">-->
+  {% css_asset_tag main %}
+  - /_assets/main.css.scss
+  {% endcss_asset_tag %}
+  <script src="/js/jquery-2.0.2.js"></script>
+  <script src="/js/jquery.lint.js"></script>
+</head>
+<body{% if page.body_id %} class="view-{{ page.body_id }} view-{{ page.body_id }}-done"{% endif %}>
+  <header id="top" class="row">
+    <a id="title" class="fn url" href="/">{{ site.author }}</a>
+    <span id="headline">is a traveling front-end developer</span>
+    <div id="about">{% unless page.single %}{% include about.html %}{% endunless %}</div>
+  </header>
+  <div id="content">
+    {{ content }}
+  </div>
+{% javascript_asset_tag main %}
+- /js/jquery.transit.js
+- /js/requestAnimationFrame.js
+- /js/footer.js
+- /js/makeIdForPath.js
+{% endjavascript_asset_tag %}
+</body>
+</html>
