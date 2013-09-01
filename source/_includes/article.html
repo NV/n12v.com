@@ -1,0 +1,26 @@
+{% unless page.no_header %}
+{% unless post %}
+	{% assign post = page %}
+{% endunless %}
+<h1 class="entry-title"><a class="entry-link" href="{{ post.url | add_slash }}" rel="bookmark">
+{% if site.titlecase %}
+	{{ post.title | titlecase }}{% else %}{{ post.title }}
+{% endif %}
+</a></h1>
+{% endunless %}
+
+<div class="entry-content">
+	{% if content | has_excerpt %}
+	<div class="entry-excerpt">
+		{{ content | excerpt }}
+	</div>
+	<div class="entry-more{% unless index %} entry-more-expanded{% endunless %}">
+	{% unless index %}
+		{{ content | after_excerpt }}
+		{% include meta.html %}
+	{% endunless %}
+	</div>
+	{% else %}
+		{{ content }}
+	{% endif %}
+</div>

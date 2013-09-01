@@ -1,0 +1,383 @@
+@import "compass";
+@import "compass/css3/transition";
+
+$base-size: 14px;
+
+$bg: #E4E7F1 !default;
+$bg-content: #EEE !default;
+
+$text-color: #333 !default;
+
+$sans: Verdana, "Helvetica Neue", Arial, sans-serif !default;
+$serif: Georgia, Marion, Kefa, serif !default;
+$mono: Consolas, Menlo, monospace !default;
+
+$content-width: 600px;
+$gap: 8vw;
+$gap-px: 45px;
+
+$margin-bottom: .75em;
+
+$duration: 0.2s;
+$smooth-out: cubic-bezier(0,0,0,1);
+$smooth-in: cubic-bezier(0,0,1,0);
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font: 87.5%/1.5 $sans; // SASS thinks $base-size/1.5 is a division operation :(
+  background: $bg;
+  color: $text-color;
+  tab-size: 2;
+  -moz-tab-size: 2;
+  margin: 0;
+  position: relative;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $serif;
+  line-height: 1.2;
+}
+h2 {
+  font-size: 150%;
+  font-weight: normal;
+  margin: 1em 0 .5em;
+}
+h3 {
+  font-size: 100%;
+  font-weight: normal;
+  margin: 1.5em 0 .75em;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+h4 {
+  font-size: 100%;
+  font-weight: bold;
+  margin: 1.5em 0 .75em;
+}
+
+p, ul, ol, dl, blockquote {
+  margin: 0 0 $margin-bottom;
+}
+blockquote {
+  padding-left: 2.1em;
+}
+p, li, blockquote {
+  max-width: $content-width;
+}
+
+samp {
+  font-size: inherit;
+}
+
+abbr {
+  letter-spacing: .1em;
+}
+
+// TODO
+// http://michaelhue.com/keyscss/
+// http://meta.stackoverflow.com/questions/1939/kbd-elements-are-way-intrusive
+// kbd {}
+
+code {
+  font-family: $mono;
+  font-size: 92.85%;
+}
+pre > code {
+  font-size: 13px; // Without it font-size in Firefox is tiny :(
+}
+var {
+  font-style: normal;
+}
+//table {
+//  border-collapse: collapse;
+//}
+th {
+  font-family: $serif;
+  text-align: left;
+  vertical-align: top;
+  padding-right: 1em;
+}
+td {
+  vertical-align: top;
+}
+pre {
+  margin: 0 0 $margin-bottom;
+  white-space: pre-wrap;
+  //font-size: 14px; // 'inherit' or 100% doesn't work for <pre>. I hate CSS.
+}
+
+#content {
+  min-height: 100%;
+}
+
+$link: rgb(14, 114, 206);
+$visited: rgb(143, 101, 160);
+$focus: #0085FF;
+
+a {
+  &:link {color: $link}
+  &:visited {color: $visited}
+  &:hover, &:focus {color: $focus}
+  &:active {color: $visited}
+}
+
+#top,
+.entry-title,
+.entry-excerpt,
+.entry-more {
+  padding-left: $gap;
+  padding-right: $gap;
+}
+
+article {
+  background: $bg-content;
+  @include transition-duration($duration);
+  @include transition-timing-function(ease-out);
+  @include transition-property('opacity');
+}
+
+//.force-wrap {
+//  white-space: -moz-pre-wrap;
+//  white-space: -pre-wrap;
+//  white-space: -o-pre-wrap;
+//  white-space: pre-wrap;
+//  word-wrap: break-word;
+//}
+
+
+$top-text-color: #162866;
+$top-text-color-light: mix($top-text-color, $bg);
+$top-link: mix($link, $bg);
+$bg-border: #CED3E4;
+//$top-link-color: hsl(hue($link), $top-text-color, );
+
+#top {
+  font-family: $serif;
+  padding-top: .2em;
+  padding-bottom: .2em;
+  border-bottom: 1px solid $bg-border;
+  background: $bg;
+  color: $top-text-color;
+}
+
+.view-home {
+  #top {
+    @include transition-duration($duration);
+    @include transition-timing-function(ease-out);
+    @include transition-property('background-color, font-size, border-bottom-color');
+  }
+  #headline {
+    color: $top-text-color;
+    -webkit-transition: $duration linear color;
+  }
+  //.entry-more {
+  //  height: 0;
+  //  @include transition-duration($duration);
+  //  @include transition-timing-function(ease-in);
+  //  @include transition-property('height');
+  //}
+}
+
+//.view-home-done .entry-more {
+//  height: 0;
+//}
+
+#title {
+  text-decoration: none;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.entry-title {
+  font: 180%/1.2 $serif normal normal;
+  margin: 0;
+  padding-top: 24px;
+  padding-bottom: 12px;
+  vertical-align: top;
+  color: #000;
+  @include transition-property('font-size, line-height, padding');
+  @include transition-duration($duration);
+  @include transition-timing-function(ease-out);
+}
+
+.entry-link {
+  text-decoration: none;
+  border-bottom: 1px solid;
+  //@include transition(color $duration/2 linear, border-bottom-color $duration linear);
+
+  &:link {border-bottom-color: mix($link, $bg);}
+  &:visited {border-bottom-color: mix($visited, $bg);}
+  &:hover, &:focus {border-bottom-color: mix($focus, $bg);}
+  &:active {border-bottom-color: mix($visited, $bg);}
+}
+
+.entry-more {
+  overflow: hidden;
+  height: 0;
+}
+
+.article-current {
+  .entry-title {
+    font-size: 250%;
+    padding-top: 32px;
+    padding-bottom: 24px;
+  }
+  .entry-link {
+    border-bottom-color: $bg-content;
+  }
+  .entry-more {
+    height: auto;
+  }
+}
+
+//.action {
+//  text-decoration: none;
+//  color: mix($link, black);
+//  border-bottom: 1px dashed mix($link, black);
+//}
+
+.view-home #title,
+.article-current .entry-link {
+  color: #000;
+  cursor: auto;
+  pointer-events: none;
+}
+
+#headline {
+  color: $bg;
+}
+#about {
+  display: none;
+}
+
+.view-home {
+  #top {
+    font-size: 150%;
+  }
+  #about {
+    display: block;
+  }
+}
+
+.view-page-done {
+  article:not(.article-current) {
+    display: none;
+  }
+  #headline {
+    display: none;
+  }
+}
+
+article {
+  //-webkit-transition: height 1s linear;
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid #CCC;
+}
+
+.shell-prompt:before,
+.terminal code:before {
+  content: '$ ';
+  color: #999;
+}
+
+#about {
+  color: $top-text-color-light;
+  overflow: hidden;
+  font-size: 75%;
+}
+#about,
+#about li {
+  margin-left: 0;
+  padding-left: 0;
+  list-style: none;
+}
+#about li {
+  display: inline-block;
+  margin-right: 12px;
+}
+#services {
+  margin: 0;
+  padding: 0;
+}
+
+#me {
+  del {display: none}
+}
+
+.meta {
+  margin: 0.75em 0;
+  color: #999;
+  font-family: $serif;
+  & > address {
+    display: inline;
+    font-style: normal;
+  }
+}
+
+.full-width {
+  box-sizing: content-box;
+  padding-left: $gap;
+  padding-right: $gap;
+  width: 100%;
+  margin-left: -$gap;
+}
+
+#disqus_thread {
+  @extend .full-width;
+  background: $bg;
+  border-top: 1px solid $bg-border;
+  margin-top: 2em;
+  padding-top: 1.5em;
+}
+
+//@media only screen and (min-width: 1000px) {
+//  html {font-size: 17px}
+//}
+//@media only screen and (min-width: 1400px) {
+//  html {font-size: 18px}
+//}
+//@media (max-width: 400px) {
+//* {color: red}
+//}
+
+// iPhone retina
+// (width <= 570px) and (pixel-ratio >= 1.5)
+@media (max-width: 570px) {
+  .entry-excerpt {
+    margin-left: 4px;
+  }
+  .entry-more {
+    p, ul, ol, dl, table, pre {
+      margin-left: 6px;
+    }
+  }
+}
+
+//@media (max-width: 700px) {
+//  p, li, pre {
+//    max-width: 500px;
+//  }
+//}
+
+// iDevice
+//@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+//only screen and (-o-min-device-pixel-ratio: 3/2),
+//only screen and (min-device-pixel-ratio: 1.5) {
+//
+//  html {
+//    font-size: 12px;
+//  }
+//  p, li, pre {
+//    max-width: 400px;
+//  }
+//}

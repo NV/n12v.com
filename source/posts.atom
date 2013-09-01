@@ -1,0 +1,25 @@
+---
+layout: nil
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-US">
+	<id>{{ site.url }}/</id>
+	<link type="application/atom+xml" rel="self" href="{{ site.url }}{{ page.url }}"/>
+	<link type="text/html" rel="alternate" href="{{ site.url }}{{ site.root }}"/>
+	<title>n12v.com: Nikita Vasilyev</title>
+	<updated>{{ site.time | date_to_xmlschema }}</updated>
+	<author>
+		<name>{{ site.author }}</name>
+	</author>
+	<link rel="hub" href="http://n12v.superfeedr.com/"/>
+	{% for post in site.posts limit: 20 %}
+	<entry>
+		<id>{{ site.url }}{{ post.url | add_slash }}</id>
+		<link type="text/html" rel="alternate" href="{{ site.url }}{{ post.url | add_slash }}"/>
+		<title type="text">{{ post.title | cdata_escape }}</title>
+		<published>{{ post.path | date_to_xmlschema }}</published>
+		<updated>{{ post.path | file_date | date_to_xmlschema }}</updated>
+		<content type="html"><![CDATA[{{ post.content | expand_urls: site.url | cdata_escape }}]]></content>
+	</entry>
+	{% endfor %}
+</feed>

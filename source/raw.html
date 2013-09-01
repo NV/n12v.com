@@ -1,0 +1,15 @@
+---
+layout: nil
+---
+
+{% include about.html %}
+
+<div id="content">
+	{% assign index = true %}
+	{% for post in site.posts %}
+	{% assign content = post.content %}
+	<article id="{{ post.id | article_id }}">
+		{% include article.html %}
+	</article>
+	{% endfor %}
+</div>

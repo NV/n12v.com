@@ -1,0 +1,278 @@
+---
+layout: post
+title: "CSS transition from/to auto values"
+date: 2013-08-26 17:24
+comments: true
+---
+
+{% assign ns = page.id | article_id %}
+<style>
+.bar-wrap {
+	position: relative;
+	margin: .75em 0;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-size: 13px;
+	background: hsl(36, 100%, 83%);
+	border: 1px solid hsl(36, 64%, 72%);
+}
+#{{ ns }} .radio-input {
+	display: none
+}
+#{{ ns }} .radio-label {
+	display: inline-block;
+	width: 99px;
+	text-align: center;
+	border-radius: 12px;
+	background: hsl(36, 100%, 83%);
+	color: hsl(36, 100%, 40%);
+	border-bottom: 1px solid rgba(204, 122, 0, 0.5);
+	border-top: 1px solid rgba(255,255,255,0.3);
+	cursor: pointer;
+	line-height: 19px;
+}
+#{{ ns }}_css {
+	-moz-transition: width .5s ease-in-out;
+	-webkit-transition: width .5s ease-in-out;
+	transition: width .5s ease-in-out;
+}
+.{{ ns }}_active {
+	background: yellow;
+}
+.{{ ns }}_fixed {
+	width: 300px;
+}
+.{{ ns }}_auto {
+	width: auto;
+}
+.{{ ns }}_bar {
+	white-space: nowrap;
+	background: hsl(36, 100%, 61%);
+	border: 1px solid hsl(36, 100%, 40%);
+	line-height: 36px;
+	padding: 0 .5em;
+	margin: -1px;
+}
+.snake {
+	background: hsl(36, 100%, 61%);
+	border: 1px solid hsl(36, 100%, 40%);
+}
+#{{ ns }} .radio-input:checked + .radio-label {
+	box-shadow: 0 0 0;
+	color: #000;
+	margin-top: 1px;
+	background: hsl(36, 100%, 61%);
+	border-top: 1px solid hsl(36, 100%, 40%);
+	border-bottom: 1px solid rgba(255,255,255,0.3);
+}
+#{{ ns }} .l-dark {
+	background: hsl(36, 100%, 61%);
+	color: hsl(36, 100%, 31%);
+}
+#{{ ns }}_toggler .radio-label {
+	position: absolute;
+	top: 26px;
+}
+</style>
+<p>None of the browsers handle CSS transition from/to auto values correctly.</p>
+<div id="{{ ns }}_toggler" class="bar-wrap" style="position:relative">
+	<label class="radio">
+		<input type="radio" name="width_toggler" value="fixed" id="width_toggler_fixed" class="radio-input" checked>
+		<span class="radio-label l-dark" style="left: 199px;">width: 300px</span>
+	</label>
+	<label class="radio">
+		<input type="radio" name="width_toggler" value="auto" id="width_toggler_auto" class="radio-input">
+		<span class="radio-label" style="right: 1px;">width: auto</span>
+	</label>
+	<div class="bar-wrapper"><div id="{{ ns }}_css" class="{{ ns }}_bar">CSS transitions</div></div>
+	<div class="bar-wrapper"><div id="{{ ns }}_fixed" class="{{ ns }}_bar">How it supposed to be<div class="border-overlay"></div></div></div>
+	<script>
+		function changed(element) {
+			var base = '{{ ns }}_';
+			var $css = $('#' + base + 'css');
+			var $fixed = $('#' + base + 'fixed');
+			var AUTO = base + 'auto';
+			var FIXED = base + 'fixed';
+			if (element.value === 'auto') {
+				$css.removeClass(FIXED);
+				$css.addClass(AUTO);
+				$fixed.transition({width: 'auto'}, 500, 'in-out');
+			} else {
+				$css.removeClass(AUTO);
+				$css.addClass(FIXED);
+				$fixed.transition({width: '300px'}, 500, 'in-out');
+			}
+		}
+
+		$('[name="width_toggler"]').on('change', function(e) {
+			changed(e.target);
+		});
+
+		$(function() {
+			var checked = $('[name="width_toggler"]:checked');
+			if (checked.length) {
+				changed(checked[0]);
+			}
+		});
+	</script>
+</div>
+<!-- more -->
+<p>I hope one day transitions to/from auto values will work out of the box in all major browsers. Meanwhile, read on.</p>
+<p>Bug reports for <a href="https://bugs.webkit.org/show_bug.cgi?id=16020">WebKit</a> and <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=571344">Firefox</a>.</p>
+<h2>From auto</h2>
+<div class="bar-wrap"><div class="snake {{ ns }}_bar" id="from-auto">
+	<label class="radio">
+		<input type="radio" name="from_auto_toggler" onchange="fromAuto_run()" value="fixed" class="radio-input" checked>
+		<span class="radio-label l-dark" style="position: absolute; left: 199px; top: 7px">width: 300px</span>
+	</label>
+	<label class="radio">
+		<input type="radio" name="from_auto_toggler" onchange="fromAuto_reset()" value="fixed" class="radio-input" checked>
+		<span class="radio-label" style="position:absolute; right:0; top:7px">width: auto</span>
+	</label>
+	&nbsp;
+</div></div>
+<pre><code>element.style.width = <a href="http://docs.webplatform.org/wiki/css/cssom/methods/getComputedStyle">getComputedStyle</a>(element).width
+element.style.transition = 'width .5s ease-in-out'
+element.offsetWidth // <a href="http://stackoverflow.com/a/3485654/16185">force repaint</a>
+element.style.width = '300px'
+</code></pre>
+<script>
+function setTransition(element, value) {
+	element.style.webkitTransition = element.style.mozTransition = element.style.transition = value;
+}
+
+function fromAuto_run() {
+	var element = document.getElementById('from-auto')
+	element.style.width = getComputedStyle(element).width
+	element.offsetWidth; // force repaint
+	setTransition(element, 'width .5s ease-in-out')
+	element.style.width = '300px'
+	setTimeout(function() {
+		setTransition(element, '')
+	}, 500);
+}
+function fromAuto_reset() {
+	var element = document.getElementById('from-auto');
+	element.style.width = '';
+}
+function toAuto_run() {
+	var element = document.getElementById('to-auto');
+	var prevWidth = element.style.width;
+	element.style.width = 'auto'
+	var endWidth = getComputedStyle(element).width
+	element.style.width = prevWidth;
+	element.offsetWidth; // force repaint
+	setTransition(element, 'width .5s ease-in-out')
+	element.style.width = endWidth
+	element.addEventListener('transitionend', function transitionEnd(event) {
+		if (event.propertyName == 'width') {
+			setTransition(element, '')
+			element.style.width = 'auto'
+			element.removeEventListener('transitionend', transitionEnd, false)
+		}
+	}, false)
+}
+function toAuto_reset() {
+	var element = document.getElementById('to-auto');
+	element.style.width = '300px';
+}
+</script>
+<h2>To auto</h2>
+<div class="bar-wrap"><div class="snake {{ ns }}_bar" id="to-auto" style="width:300px">
+	<label class="radio">
+		<input type="radio" name="to_auto_toggler" onchange="toAuto_reset()" value="fixed" class="radio-input" checked>
+		<span class="radio-label l-dark" style="position: absolute; left: 199px; top: 7px">width: 300px</span>
+	</label>
+	<label class="radio">
+		<input type="radio" name="to_auto_toggler" onchange="toAuto_run()" value="fixed" class="radio-input">
+		<span class="radio-label" style="position:absolute; right:0; top:7px">width: auto</span>
+	</label>
+	&nbsp;
+</div></div>
+<pre><code>var prevWidth = element.style.width
+element.style.width = 'auto'
+var endWidth = getComputedStyle(element).width
+element.style.width = prevWidth
+element.offsetWidth // force repaint
+element.style.transition = 'width .5s ease-in-out'
+element.style.width = endWidth
+element.addEventListener('<a href="http://docs.webplatform.org/wiki/tutorials/css_transitions#The_transitionend_event">transitionend</a>', function transitionEnd(event) {
+	if (event.propertyName == 'width') {
+		element.style.transition = ''
+		element.style.width = 'auto'
+		element.removeEventListener('transitionend', transitionEnd, false)
+	}
+}, false)
+</code></pre>
+<p>That’s a lot of code for a simple transition and haven’t even covered vendor prefixes to make it work in Firefox, WebKit, IE and Opera. To automate this I use jquery.transit.</p>
+<h2>jquery.transit</h2>
+<p><a href="http://ricostacruz.com/jquery.transit">jquery.transit</a> is a jQuery plugin that provides neat JS API for creating animations using CSS transitions.</p>
+<p>I forked <a href="https://github.com/NV/jquery.transit">jquery.transit</a> to make it work with transitions from/to auto values.</p>
+<pre><code>element.transition({width: 'auto'}, 500, 'in-out')
+element.transition({width: '300px'}, 500, 'in-out')</code></pre>
+<h2 id="max-height">Pure CSS max-height (max-width) workaround</h2>
+<p>The most popular answer to "<a href="http://stackoverflow.com/questions/3508605/css-transition-height-0-to-height-auto">CSS transition height: 0; to height: auto;</a>" question on Stackoverflow is:</p>
+<blockquote cite="http://stackoverflow.com/a/8331169/16185">Use max-height in the transformation and not height. And set a value on max-height to something bigger than your box will ever get.</blockquote>
+<style>
+#to-from-max-width {
+	-moz-transition: max-width 1s ease-in-out;
+	-webkit-transition: max-width 1s ease-in-out;
+	transition: max-width 1s ease-in-out;
+}
+#to-from-max-width .radio-label {
+	width: 140px;
+}
+</style>
+<div class="bar-wrap"><div class="snake article_css-transition-to-from-auto_bar" id="to-from-max-width" style="max-width:4000px">
+	<label class="radio">
+		<input type="radio" name="max-width_toggler" onchange="maxWidth_toFixed()" value="fixed" class="radio-input">
+		<span class="radio-label l-dark" style="position: absolute; left: 5px; top: 7px">max-width: 160px</span>
+	</label>
+	<label class="radio">
+		<input type="radio" name="max-width_toggler" onchange="maxWidth_toAuto()" value="fixed" class="radio-input" checked="">
+		<span class="radio-label" style="position:absolute; right:0; top:7px">max-width: 4000px</span>
+	</label>
+	&nbsp;
+</div></div>
+<pre><code>#to-from-max-width {
+	transition: max-width 1s ease-in-out;
+}</code></pre>
+<p>In the example above I set max-width to 4000px. Who has such a wide screen, right?</p>
+<p>Here goes the problem:</p>
+<p>The width of the orange box in your browser is currently <var class="{{ ns }}_width">X</var>px.<br/>
+Transition from 160px to 4000px takes 1 second.<br>
+Transition from 160px to <var class="{{ ns }}_width">X</var>px takes <var class="{{ ns }}_width">(X-160)/4000</var> second; animation looks <var class="{{ ns }}_width">4000/(X-160)</var>&times; faster.<br>
+Transition from <var class="{{ ns }}_width">X</var>px to 160px looks delayed for <var class="{{ ns }}_width">1-((X-160)/4000)</var>; that’s the time to go from 4000px to <var class="{{ ns }}_width">X</var>px which has no visible effect whatsoever.</p>
+<p>Resize you browser window, see how values change. Narrower the window, more screwed up the animation.</p>
+<script>
+	(function() {
+		var MIN = 160;
+		var MAX = 4000;
+		window.maxWidth_toFixed = function() {
+			document.getElementById('to-from-max-width').style.maxWidth = MIN + 'px';
+		};
+		window.maxWidth_toAuto = function() {
+			document.getElementById('to-from-max-width').style.maxWidth = MAX + 'px';
+		};
+		function round(x) {
+			return Math.round(x * 100) / 100;
+		}
+		function updateWidth() {
+			var el = document.getElementById('to-from-max-width');
+			var width = el.offsetWidth;
+			var w = document.querySelectorAll('.{{ ns }}_width');
+			for (var i = 0; i < w.length; i++) {
+				var item = w[i];
+				if (!item.dataset.formula) {
+					item.dataset.formula = item.textContent;
+				}
+				var expression = item.dataset.formula.replace(/X/g, width);
+				var value = eval(expression);
+				item.textContent = round(value);
+			}
+		}
+		updateWidth();
+		window.addEventListener('resize', function() {
+			updateWidth();
+		}, false);
+	})();
+</script>

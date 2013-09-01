@@ -1,25 +1,48 @@
+title: Nikita Vasilyev
 name: Nikita Vasilyev
 author: Nikita Vasilyev
+domain: n12v.com
+url: http://n12v.com
+
+root: /
+permalink: /:title/
+source: source
+destination: public
+plugins: plugins
 
 pygments: false
 
-permalink: /:title
-
 excerpt_separator: '<!-- more -->'
 
+dev: true
+
+# Used only for JS
 asset_bundler:
   compress:
     js: java -jar ~/closure/latest.jar --js :infile --js_output_file :outfile
+    #  --compilation_level ADVANCED_OPTIMIZATIONS
     css: false
-  base_path: /bundles/
+  markup_templates:
+      js: '<script src="{{url}}"></script>'
+      css: '<link rel=stylesheet href="{{url}}">'
+  base_path: /
   cdn:
-  remove_bundled: false
-  dev: false
+  remove_bundled: true
+  dev: true
+  bundle_name: 'min'
 
+# Used only for SCSS/Compass
 asset_pipeline:
   bundle: false            # Default = true
   compress: false          # Default = true
-  output_path: assets     # Default = assets
+  output_path: css     # Default = assets
+  gzip: false
 #  display_path: nil
-#  gzip: false
-#  dev: false
+
+assets:
+  dirname: assets
+  baseurl: /assets/
+  sources:
+    - _assets
+  debug: true
+  css_compressor: 'sass'

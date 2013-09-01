@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{% if page.title %}{{ page.title }}{% else %}{{ site.name }}{% endif %}</title>
+<meta name="author" content="{{ site.author }}">
+<script>document.documentElement.className='js'</script>
+{% if site.dev %}
+{% css_asset_tag global %}
+- /_assets/main.css.scss
+{% endcss_asset_tag %}
+<script src="/js/jquery.js"></script>
+<script src="/js/jquery.lint.js"></script>
+<script src="/js/disqus_debug.js"></script>
+{% else %}
+<link rel=stylesheet href="/main.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+{% endif %}
+<link rel="alternate" type="application/atom+xml" href="/posts.atom">
+</head>
+<body{% if page.body_id %} class="view-{{ page.body_id }} view-{{ page.body_id }}-done"{% endif %}>
+<header id="top" class="vcard">
+<a id="title" class="fn url" href="/">{{ site.author }}</a>
+<span id="headline">is a traveling front-end developer</span>
+<div id="about">{% unless page.single %}{% include about.html %}{% endunless %}</div>
+</header>
+<div id="content">
+{{ content }}
+</div>
+{% bundle %}
+- /js/jquery.transit.js
+- /js/requestAnimationFrame.js
+- /js/footer.js
+- /js/googleAnalitics.js
+{% endbundle %}
+</body>
+</html>

@@ -1,0 +1,17 @@
+The source code of [n12v.com](http://n12v.com/).
+
+This website built using [Jekyll](http://jekyllrb.com/) version 1.x.
+
+## Run locally
+
+Install [Bundler](http://bundler.io/).
+
+Run:
+
+    n12v.com ➤ bundle install
+    n12v.com ➤ bundle exec jekyll serve --watch
+
+
+## Deploy on Amazon S3 and Cloudfront
+
+    n12v.com ➤ rake

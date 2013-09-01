@@ -1,0 +1,9 @@
+---
+layout: default
+single: true
+body_id: page
+---
+{% assign ns = page.id | article_id %}
+<article id="{{ ns }}" class="hentry article-current" role="article">
+	{% include article.html %}
+</article>

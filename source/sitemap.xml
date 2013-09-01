@@ -1,0 +1,25 @@
+---
+layout: nil
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="http://usercss.ru/styles/table-sitemap-xml/table-sitemap-xml.css" type="text/css"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	{% for post in site.posts %}
+	<url>
+		<loc>{{ site.url }}/{{ post.url }}</loc>
+		<lastmod>{{ post.path | file_date | date_to_xmlschema }}</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>1.0</priority>
+	</url>
+	{% endfor %}
+	<url>
+		<loc>{{ site.url }}/</loc>
+		<changefreq>daily</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>{{ site.url }}/posts.atom</loc>
+		<changefreq>daily</changefreq>
+		<priority>0.5</priority>
+	</url>
+</urlset>

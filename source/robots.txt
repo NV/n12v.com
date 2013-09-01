@@ -1,0 +1,10 @@
+---
+layout: nil
+---
+
+User-Agent: *
+Disallow: /*/raw.html
+Allow: /
+Host: {{ site.domain }}
+
+Sitemap: {{ site.url }}/sitemap.xml
