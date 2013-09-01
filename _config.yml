@@ -38,11 +38,3 @@ asset_pipeline:
   output_path: css     # Default = assets
   gzip: false
 #  display_path: nil
-
-assets:
-  dirname: assets
-  baseurl: /assets/
-  sources:
-    - _assets
-  debug: true
-  css_compressor: 'sass'
