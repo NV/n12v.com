@@ -368,20 +368,6 @@ function escapeId(id) {
 }
 
 
-function animateShit() {
-	var el = document.getElementById('article:/blogging-with-octopress');
-	var prev = el.previousElementSibling;
-	var t = el.offsetTop - document.body.scrollTop;
-	prev.style.height = t + 'px';
-	document.body.scrollTop = $('#top').outerHeight();
-
-	requestAnimationFrame(function(){
-		$(prev).animate({height: 0}, 200);
-		$(el).addClass('article-current');
-	});
-}
-
-
 function isPlainClick(event) {
 	var link = event.target;
 
@@ -409,53 +395,6 @@ function isPlainClick(event) {
 	return true;
 }
 
-
-
-// jQuery, Y U R NO animate 'transform' ?
-function animate(elem, name, value) {
-	var camelName = jQuery.camelCase(name);
-	camelName = vendorPropName(elem.style, camelName);
-
-	var initialValue = elem.style[camelName];
-	if (!initialValue) {
-		initialValue = value.replace(/-?\d+/g, '0');
-		elem.style[camelName] = initialValue;
-	}
-
-	jQuery.style(elem, 'transition', camelCaseToHyphens(camelName) + ' 0.2s linear');
-	elem.style[camelName] = value;
-}
-
-
-function camelCaseToHyphens(str) {
-	return str.replace(/([A-Z])/g, function(str) {
-		return '-' + str.toLowerCase()
-	});
-}
-
-// return a css property mapped to a potentially vendor prefixed property
-function vendorPropName( style, name ) {
-
-	// shortcut for names that are not vendor prefixed
-	if ( name in style ) {
-		return name;
-	}
-
-	var cssPrefixes = [ "Webkit", "O", "Moz", "ms" ];
-	// check for vendor prefixed names
-	var capName = name.charAt(0).toUpperCase() + name.slice(1),
-	origName = name,
-	i = cssPrefixes.length;
-
-	while ( i-- ) {
-		name = cssPrefixes[ i ] + capName;
-		if ( name in style ) {
-			return name;
-		}
-	}
-
-	return origName;
-}
 
 })();
 
