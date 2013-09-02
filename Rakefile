@@ -1,6 +1,6 @@
 SRC = 'public_deploy'
-TEMP = 'build_cache'
-DEST = 'build'
+TEMP = 'build'
+DEST = 'build_gzip'
 
 HOST = 'n12v.com'
 CONFIG = '_production.yml'
@@ -13,7 +13,18 @@ EXTENSIONS = %w{
   atom
 }
 
-task :default => ['_production.yml', :jekyll, :sass, :gzip_and_upload, :pubsubhubbub]
+task :default => [:build, :copy_modified]
+
+desc "Build to #{TEMP}"
+task :build => ['_production.yml', :jekyll, :sass, :copy_modified] do
+  puts 'BUILT!'
+end
+
+
+desc "Upload #{DEST}"
+task :upload => [:gzip_and_upload, :pubsubhubbub] do
+  puts 'UPLOADED!'
+end
 
 
 file '_production.yml' => ['production.yml', '_config.yml'] do
@@ -54,9 +65,15 @@ end
 directory TEMP
 directory DEST
 
-desc "#{SRC} --> #{TEMP} --> #{DEST} --> Amazon S3 & Amazon CloundFront"
-task :gzip_and_upload => [DEST, TEMP] do
-  system_run("rsync --checksum       --recursive -L --perms --group --delete-excluded --itemize-changes #{SRC}/ #{TEMP}/")
+
+desc "#{SRC} --> #{TEMP}"
+task :copy_modified do
+  system_run("rsync --checksum --recursive -L --perms --group --delete-excluded --itemize-changes #{SRC}/ #{TEMP}/")
+end
+
+
+desc "#{TEMP} --> #{DEST} --> Amazon S3 & Amazon CloudFront"
+task :gzip_and_upload => [DEST] do
   system_run("rsync --times --update --recursive -L --perms --group --delete-excluded --verbose        #{TEMP}/ #{DEST}/")
 
   files = []
