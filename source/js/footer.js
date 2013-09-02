@@ -33,7 +33,7 @@ $('body').on('click', '#title, .entry-link', function(e) {
 });
 
 function onLocationChange() {
-	if (window.ga) {
+	if (window.ga && !window.DEBUG) {
 		ga('send', 'pageview');
 	}
 }
