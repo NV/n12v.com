@@ -11,6 +11,7 @@ EXTENSIONS = %w{
 	js
 	xml
   atom
+  txt
 }
 
 task :default => [:build, :copy_modified]
