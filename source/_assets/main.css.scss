@@ -350,19 +350,6 @@ article {
 //* {color: red}
 //}
 
-// iPhone retina
-// (width <= 570px) and (pixel-ratio >= 1.5)
-@media (max-width: 570px) {
-  .entry-excerpt {
-    margin-left: 4px;
-  }
-  .entry-more {
-    p, ul, ol, dl, table, pre {
-      margin-left: 6px;
-    }
-  }
-}
-
 //@media (max-width: 700px) {
 //  p, li, pre {
 //    max-width: 500px;
