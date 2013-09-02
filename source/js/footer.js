@@ -144,7 +144,7 @@ function route(link) {
 						document.body.scrollTop = $('#top').outerHeight();
 						next.css('opacity', '');
 
-						requestAnimationFrame(loadDisqus);
+						loadDisqus();
 					}
 
 					if (next.length == 0) {
@@ -171,34 +171,36 @@ if (view === VIEW.PAGE) {
 }
 
 function loadDisqus() {
-	var disqus_thread = document.getElementById('disqus_thread');
-	if (disqus_thread) {
-		disqus_thread.parentNode.removeChild(disqus_thread);
-	}
-	var current = $('.article-current .entry-more');
-	current.append('<div id="disqus_thread"/>');
+	requestAnimationFrame(function() {
+		var disqus_thread = document.getElementById('disqus_thread');
+		if (disqus_thread) {
+			disqus_thread.parentNode.removeChild(disqus_thread);
+		}
+		var current = $('.article-current .entry-more');
+		current.append('<div id="disqus_thread"/>');
 
-	function canonicalURL() {
-		return 'http://n12v.com' + location.pathname;
-	}
+		function canonicalURL() {
+			return 'http://n12v.com' + location.pathname;
+		}
 
-	//window.disqus_identifier = location.pathname;
-	window.disqus_url = canonicalURL();
-	if (window.DISQUS) {
-		DISQUS.reset({
-			reload: true,
-			config: function () {
-				//this.page.identifier = canonicalURL();
-				this.page.url = canonicalURL();
-			}
-		});
-	} else {
-		var disqus_shortname = 'n12v';
-		var dsq = document.createElement('script');
-		dsq.async = true;
-		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-		document.body.appendChild(dsq);
-	}
+		//window.disqus_identifier = location.pathname;
+		window.disqus_url = canonicalURL();
+		if (window.DISQUS) {
+			DISQUS.reset({
+				reload: true,
+				config: function () {
+					//this.page.identifier = canonicalURL();
+					this.page.url = canonicalURL();
+				}
+			});
+		} else {
+			var disqus_shortname = 'n12v';
+			var dsq = document.createElement('script');
+			dsq.async = true;
+			dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+			document.body.appendChild(dsq);
+		}
+	});
 }
 
 

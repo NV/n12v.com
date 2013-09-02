@@ -86,6 +86,7 @@ comments: true
 	<div class="bar-wrapper"><div id="{{ ns }}_css" class="{{ ns }}_bar">CSS transitions</div></div>
 	<div class="bar-wrapper"><div id="{{ ns }}_fixed" class="{{ ns }}_bar">How it supposed to be<div class="border-overlay"></div></div></div>
 	<script>
+	document.addEventListener('DOMContentLoaded', function() {
 		function changed(element) {
 			var base = '{{ ns }}_';
 			var $css = $('#' + base + 'css');
@@ -107,12 +108,11 @@ comments: true
 			changed(e.target);
 		});
 
-		$(function() {
-			var checked = $('[name="width_toggler"]:checked');
-			if (checked.length) {
-				changed(checked[0]);
-			}
-		});
+		var checked = $('[name="width_toggler"]:checked');
+		if (checked.length) {
+			changed(checked[0]);
+		}
+	}, false);
 	</script>
 </div>
 <!-- more -->
@@ -244,35 +244,35 @@ Transition from 160px to <var class="{{ ns }}_width">X</var>px takes <var class=
 Transition from <var class="{{ ns }}_width">X</var>px to 160px looks delayed for <var class="{{ ns }}_width">1-((X-160)/4000)</var>; that’s the time to go from 4000px to <var class="{{ ns }}_width">X</var>px which has no visible effect whatsoever.</p>
 <p>Resize you browser window, see how values change. Narrower the window, more screwed up the animation.</p>
 <script>
-	(function() {
-		var MIN = 160;
-		var MAX = 4000;
-		window.maxWidth_toFixed = function() {
-			document.getElementById('to-from-max-width').style.maxWidth = MIN + 'px';
-		};
-		window.maxWidth_toAuto = function() {
-			document.getElementById('to-from-max-width').style.maxWidth = MAX + 'px';
-		};
-		function round(x) {
-			return Math.round(x * 100) / 100;
-		}
-		function updateWidth() {
-			var el = document.getElementById('to-from-max-width');
-			var width = el.offsetWidth;
-			var w = document.querySelectorAll('.{{ ns }}_width');
-			for (var i = 0; i < w.length; i++) {
-				var item = w[i];
-				if (!item.dataset.formula) {
-					item.dataset.formula = item.textContent;
-				}
-				var expression = item.dataset.formula.replace(/X/g, width);
-				var value = eval(expression);
-				item.textContent = round(value);
+(function() {
+	var MIN = 160;
+	var MAX = 4000;
+	window.maxWidth_toFixed = function() {
+		document.getElementById('to-from-max-width').style.maxWidth = MIN + 'px';
+	};
+	window.maxWidth_toAuto = function() {
+		document.getElementById('to-from-max-width').style.maxWidth = MAX + 'px';
+	};
+	function round(x) {
+		return Math.round(x * 100) / 100;
+	}
+	function updateWidth() {
+		var el = document.getElementById('to-from-max-width');
+		var width = el.offsetWidth;
+		var w = document.querySelectorAll('.{{ ns }}_width');
+		for (var i = 0; i < w.length; i++) {
+			var item = w[i];
+			if (!item.dataset.formula) {
+				item.dataset.formula = item.textContent;
 			}
+			var expression = item.dataset.formula.replace(/X/g, width);
+			var value = eval(expression);
+			item.textContent = round(value);
 		}
+	}
+	updateWidth();
+	window.addEventListener('resize', function() {
 		updateWidth();
-		window.addEventListener('resize', function() {
-			updateWidth();
-		}, false);
-	})();
+	}, false);
+})();
 </script>
