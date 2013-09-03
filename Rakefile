@@ -6,15 +6,16 @@ HOST = 'n12v.com'
 CONFIG = '_production.yml'
 
 EXTENSIONS = %w{
-	html
-	css
-	js
-	xml
+  html
+  css
+  js
+  xml
   atom
   txt
+  ico
 }
 
-task :default => [:build, :copy_modified]
+task :default => [:build, :gzip_and_upload]
 
 desc "Build to #{TEMP}"
 task :build => ['_production.yml', :jekyll, :sass, :copy_modified] do
