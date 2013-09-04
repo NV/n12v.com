@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="utf-8">
+ <title>{{ site.name }} &middot; Not Found</title>
+ {% if site.dev %}
+ {% css_asset_tag global %}
+ - /_assets/main.css.scss
+ {% endcss_asset_tag %}
+ {% else %}
+ <link rel=stylesheet href="/main.css">
+ {% endif %}
+</head>
+<body class="page-error">
+<header id="top">
+	<a id="title" href="/">{{ site.author }}</a>
+</header>
+<div id="content">
+	{{ content }}
+</div>
+</body>
+</html>
