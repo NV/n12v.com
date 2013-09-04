@@ -101,7 +101,7 @@ task :gzip_and_upload => [DEST] do
     end
 
     gzip_path = "#{dest_path}.gz"
-    system_run("gzip --best --no-name --verbose --stdout #{dest_path} > #{gzip_path}")
+    system_run("zopfli --i1000 -v -c #{dest_path} > #{gzip_path}")
 
     # GZip increases size for small files
     size_orig = File.size(dest_path)
@@ -122,11 +122,15 @@ task :gzip_and_upload => [DEST] do
     # --dry-run
   end
 
+  def s3_put_one(path, dest)
+    system_run("s3cmd put --acl-public --no-preserve --add-header='Content-Encoding: gzip' #{path} s3://#{HOST}/#{dest}")
+  end
+
   def s3_put(files)
     files.each {|f|
       path = File.join(DEST, f)
       # TODO: Use `s3cmd modify` when the time comes https://github.com/s3tools/s3cmd/issues/37
-      system_run("s3cmd put --acl-public --no-preserve --add-header='Content-Encoding: gzip' #{path} s3://#{HOST}/#{f}")
+      s3_put_one(path, f)
     }
   end
 
