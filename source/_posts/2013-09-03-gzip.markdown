@@ -1,0 +1,82 @@
+---
+layout: post
+title: "Gzip"
+date: 2013-09-03 18:11
+comments: true
+---
+
+Gzip reduces the file size by compressing repeating sequences of bytes.
+The longer the sequences are, the better the compression rate.
+When all the bytes in a file are unique, the compressed file becomes even larger than the original.
+
+<!-- more -->
+
+"abcdefghijklmnopqrstuvwxyz" contains 26 characters, or 26 bytes.
+
+<pre class="terminal"><code>echo "abcdefghijklmnopqrstuvwxyz" &gt; alphabet.txt</code>
+<code>wc -c &lt; alphabet.txt
+  27</code></pre>
+The `wc -c` command shows the file size in bytes; it works on Mac OS X, Linux and FreeBSD.
+27 bytes are for the 26 letters of alphabet and a newline character at the end.
+
+<pre class="terminal"><code>gzip -9 --no-name alphabet.txt</code></pre>
+
+`-9` indicates the maximum compression level.  
+`--no-name` tells gzip not to store original filename or timestamp.
+
+<pre class="terminal"><code>wc -c &lt; alphabet.txt.gz
+  47</code></pre>
+
+The compressed file is 20 bytes larger; Gzip metadata accounts for the additional bytes.
+[Dissecting the GZIP format](http://www.infinitepartitions.com/art001.html) goes into greater details on the compression algorithm.
+
+## When to use Gzip?
+
+The [deploy script](https://github.com/NV/n12v.com/blob/master/Rakefile) for this website gzips every file
+and compares the resulting file’s size to the original’s. When the result is larger, it keeps the original.
+
+Gzip improved file size for almost all text files (JS, CSS, HTML):
+* [index.html](/) went from 5.8 KB to 2.5 (43% of the original)
+* [min.js](/min.js) went from 11.4 KB to 4.8 (42% of the original)
+* [main.css](/main.css) went from 4.4 KB to 1.7 (38% of the original)
+* [debug.js](/js/debug.js) is a tiny file that became larger after compression, from 46 to 63 bytes. Gzip metadata accounted for this overhead.
+
+The file size of all PNG and JPG images increased or stayed about the same. That’s expected because these formats already support compression.
+
+[favicon.ico](/favicon.ico) went from 5.4 KB to 2.4 KB. Ico is a a container format for BMP images, which does not support compression,
+thus the result.
+
+## Zopfli
+
+[Zopfli](https://code.google.com/p/zopfli/) is a better gzip compressor from Google:
+
+<blockquote city="https://code.google.com/p/zopfli/">Zopfli Compression Algorithm is a new zlib (gzip, deflate) compatible compressor.
+This compressor takes more time (~100x slower), but compresses around 5% better than zlib and better
+than any other zlib-compatible compressor we have found.</blockquote>
+
+zopfli command-line tool allows to specify number of iterations to perform:
+
+<pre class="terminal"><code>zopfli -i20 -v index.html
+Saving to: index.html.gz
+block split points: (hex:)
+Iteration 0: 17755 bit
+Iteration 2: 17741 bit
+Iteration 3: 17739 bit
+Iteration 4: 17738 bit
+Iteration 5: 17737 bit
+treesize: 75
+compressed block size: 2141 (2k) (unc: 6569)
+Original Size: 6569, Deflate: 2227, Compression: 66.098341% Removed
+Original Size: 6569, Gzip: 2235, Compression: 65.976557% Removed</code></pre>
+
+It didn’t yield any improvements in size after 5<sup>th</sup> iteration.
+
+"≈100&times; slower" might look scary but in my case it didn’t make any noticeable difference:
+
+<pre class="terminal"><code>time zopfli -i20 index.html
+        0.03 real         0.02 user         0.00 sys</code>
+<code>time gzip -9 --no-name index.html
+        0.00 real         0.00 user         0.00 sys</code></pre>
+
+On Mac OS X zopfli can be installed via homebrew:
+<pre class="terminal"><code>brew install zopfli</code></pre>
