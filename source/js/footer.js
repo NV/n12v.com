@@ -12,12 +12,16 @@ function fragmentUrlForPath(path) {
 
 
 var isFirstCall = true;
+var prevPath = stripHash(location);
+
 $(window).on('popstate', function() {
 	if (isFirstCall) {
 		// popstate event fires on window load, I don’t know why
 		isFirstCall = false;
 	} else {
-		route(location);
+		if (prevPath !== stripHash(location)) {
+			route(location);
+		}
 		onLocationChange();
 	}
 });
@@ -32,7 +36,19 @@ $('body').on('click', '#title, .entry-link', function(e) {
 	}
 });
 
+
+function stripHash(link) {
+	var str = link.toString();
+	var index = str.lastIndexOf('#');
+	if (index !== -1) {
+		return str.slice(0, index);
+	}
+	return str;
+}
+
+
 function onLocationChange() {
+	prevPath = stripHash(location);
 	if (window.ga && !window.DEBUG) {
 		ga('send', 'pageview');
 	}
@@ -399,4 +415,3 @@ function isPlainClick(event) {
 
 
 })();
-
