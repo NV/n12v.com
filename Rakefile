@@ -15,7 +15,7 @@ EXTENSIONS = %w{
   ico
 }
 
-task :default => [:build, :gzip_and_upload]
+task :default => [:build, :upload]
 
 desc "Build to #{TEMP}"
 task :build => ['_production.yml', :jekyll, :sass, :copy_modified] do
