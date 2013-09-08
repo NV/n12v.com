@@ -149,31 +149,10 @@ function route(link) {
 						// Happens when we switch back to the home page before transition ends
 						return;
 					}
-					var next = $('.article-current').nextAll('article');
-
-					var once = false;
-
-					function allCollapsed() {
-						if (once) {
-							return;
-						}
-						once = true;
-						setViewImmediately(VIEW.PAGE);
-						document.body.scrollTop = $('#top').outerHeight();
-						next.css('opacity', '');
-
-						loadDisqus();
-					}
-
-					if (next.length == 0) {
-						allCollapsed();
-					} else {
-						next.transition({
-							opacity: 0
-						}, OPENING_ANIMATION_DURATION, 'linear', allCollapsed);
-					}
-
 					more.css('max-height', '');
+					setViewImmediately(VIEW.PAGE);
+					document.body.scrollTop = $('#top').outerHeight();
+					loadDisqus();
 				} else {
 					i++;
 				}
