@@ -1,6 +1,6 @@
 (function() {
 
-var OPENING_ANIMATION_DURATION = 200;
+var OPENING_ANIMATION_DURATION = 200; // Keep in sync with $duration in main.css.scss :(
 
 /**
  * @param {string} path
@@ -112,7 +112,9 @@ function route(link) {
 		article.addClass('article-current');
 		var more = article.find('.entry-more');
 		more.css('max-height', 0);
-	
+
+		setViewProgress(VIEW.PAGE);
+
 		fetch(link.href, function fetchedPage(elements) {
 
 			if (elements) {
@@ -311,6 +313,9 @@ function fetch(url, success) {
 
 var onComplete = null;
 
+//TODO: Replace setView, setViewImmediately, setViewProgressImplement with Blend Tree abstraction
+// http://docs.unity3d.com/Documentation/Manual/AnimationBlendTrees.html
+
 /**
  * @param {string} path
  */
@@ -354,6 +359,19 @@ function setViewImmediately(newView) {
 		.removeClass(view).removeClass(view + '-done')
 		.addClass(newView).addClass(newView + '-done');
 	view = newView;
+}
+
+function setViewProgress(newView) {
+	if (newView === view) {
+		console.warn('Same view', newView);
+		return;
+	}
+	if (onComplete) {
+		onComplete();
+	}
+	$('body')
+		.removeClass(view + '-done')
+		.addClass(newView);
 }
 
 

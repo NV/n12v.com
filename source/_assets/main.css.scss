@@ -18,7 +18,7 @@ $gap-px: 45px;
 
 $margin-bottom: .75em;
 
-$duration: 0.2s;
+$duration: .2s; // Keep in sync with OPENING_ANIMATION_DURATION in footer.js
 $smooth-out: cubic-bezier(0,0,0,1);
 $smooth-in: cubic-bezier(0,0,1,0);
 
@@ -185,9 +185,9 @@ $bg-border: #CED3E4;
   //}
 }
 
-//.view-home-done .entry-more {
-//  height: 0;
-//}
+.view-home-done .entry-more {
+  display: none;
+}
 
 #title {
   text-decoration: none;
