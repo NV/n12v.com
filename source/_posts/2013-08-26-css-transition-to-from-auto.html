@@ -86,33 +86,40 @@ comments: true
 	<div class="bar-wrapper"><div id="{{ ns }}_css" class="{{ ns }}_bar">CSS transitions</div></div>
 	<div class="bar-wrapper"><div id="{{ ns }}_fixed" class="{{ ns }}_bar">How it supposed to be<div class="border-overlay"></div></div></div>
 	<script>
-	document.addEventListener('DOMContentLoaded', function() {
-		function changed(element) {
-			var base = '{{ ns }}_';
-			var $css = $('#' + base + 'css');
-			var $fixed = $('#' + base + 'fixed');
-			var AUTO = base + 'auto';
-			var FIXED = base + 'fixed';
-			if (element.value === 'auto') {
-				$css.removeClass(FIXED);
-				$css.addClass(AUTO);
-				$fixed.transition({width: 'auto'}, 500, 'in-out');
-			} else {
-				$css.removeClass(AUTO);
-				$css.addClass(FIXED);
-				$fixed.transition({width: '300px'}, 500, 'in-out');
+	(function() {
+		function jQueryLoaded() {
+			function changed(element) {
+				var base = '{{ ns }}_';
+				var $css = $('#' + base + 'css');
+				var $fixed = $('#' + base + 'fixed');
+				var AUTO = base + 'auto';
+				var FIXED = base + 'fixed';
+				if (element.value === 'auto') {
+					$css.removeClass(FIXED);
+					$css.addClass(AUTO);
+					$fixed.transition({width: 'auto'}, 500, 'in-out');
+				} else {
+					$css.removeClass(AUTO);
+					$css.addClass(FIXED);
+					$fixed.transition({width: '300px'}, 500, 'in-out');
+				}
+			}
+
+			$('[name="width_toggler"]').on('change', function(e) {
+				changed(e.target);
+			});
+
+			var checked = $('[name="width_toggler"]:checked');
+			if (checked.length) {
+				changed(checked[0]);
 			}
 		}
-
-		$('[name="width_toggler"]').on('change', function(e) {
-			changed(e.target);
-		});
-
-		var checked = $('[name="width_toggler"]:checked');
-		if (checked.length) {
-			changed(checked[0]);
+		if (window.jQuery) {
+			jQueryLoaded();
+		} else {
+			document.addEventListener('DOMContentLoaded', jQueryLoaded, false);
 		}
-	}, false);
+	})();
 	</script>
 </div>
 <!-- more -->
