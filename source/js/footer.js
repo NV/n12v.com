@@ -78,6 +78,26 @@ function collapsePreviousArticle() {
 
 var currentTransition = '';
 
+var scrollableRoot = null;
+function getScrollableRoot() {
+	if (!scrollableRoot) {
+		var body = document.body;
+		if (body.scrollTop !== 0) {
+			scrollableRoot = body;
+		} else {
+			var prev = body.scrollTop;
+			body.scrollTop++;
+			if (body.scrollTop === prev) {
+				scrollableRoot = document.documentElement;
+			} else {
+				body.scrollTop--;
+				scrollableRoot = body;
+			}
+		}
+	}
+	return scrollableRoot;
+}
+
 
 /**
  * @param {Location|HTMLAnchorElement} link
@@ -126,12 +146,11 @@ function route(link) {
 
 			var i = 0;
 
-			$('body').animate({
+			$(getScrollableRoot()).animate({
 				scrollTop: y
 			}, OPENING_ANIMATION_DURATION, 'swing', allDone);
 
 			if (height) {
-				more.css('max-height', 0);
 				more.transition({
 					'max-height': height
 				}, OPENING_ANIMATION_DURATION, 'out', allDone);
@@ -147,7 +166,7 @@ function route(link) {
 					}
 					more.css('max-height', '');
 					setViewImmediately(VIEW.PAGE);
-					document.body.scrollTop = $('#top').outerHeight();
+					getScrollableRoot().scrollTop = $('#top').outerHeight();
 					loadDisqus();
 				} else {
 					i++;
