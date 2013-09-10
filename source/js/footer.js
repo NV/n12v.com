@@ -15,13 +15,9 @@ var isFirstCall = true;
 var prevPath = stripHash(location);
 
 $(window).on('popstate', function() {
-	if (isFirstCall) {
-		// popstate event fires on window load, I don’t know why
-		isFirstCall = false;
-	} else {
-		if (prevPath !== stripHash(location)) {
-			route(location);
-		}
+	// WebKit and Blink call popstate event on page load, Firefox doesn't.
+	if (prevPath !== stripHash(location)) {
+		route(location);
 		onLocationChange();
 	}
 });
