@@ -14,7 +14,7 @@ $mono: Consolas, Menlo, monospace !default;
 
 $content-width: 600px;
 $gap: 8vw;
-$gap-px: 45px;
+$gap-px: 6%;
 
 $margin-bottom: .75em;
 
@@ -132,7 +132,9 @@ a {
 .entry-title,
 .entry-excerpt,
 .entry-more {
+  padding-left: $gap-px;
   padding-left: $gap;
+  padding-right: $gap-px;
   padding-right: $gap;
 }
 
@@ -326,9 +328,12 @@ article {
 
 .full-width {
   box-sizing: content-box;
+  padding-left: $gap-px;
   padding-left: $gap;
+  padding-right: $gap-px;
   padding-right: $gap;
   width: 100%;
+  margin-left: -$gap-px;
   margin-left: -$gap;
 }
 
