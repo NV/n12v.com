@@ -192,7 +192,7 @@ function loadDisqus() {
 		current.append('<div id="disqus_thread"/>');
 
 		function canonicalURL() {
-			return 'http://n12v.com' + location.pathname;
+			return 'http://n12v.com' + $('.article-current .entry-link').attr('href');
 		}
 
 		//window.disqus_identifier = location.pathname;
