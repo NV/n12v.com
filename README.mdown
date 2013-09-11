@@ -4,7 +4,8 @@ This website built using [Jekyll](http://jekyllrb.com/) version 1.x.
 
 ## Run locally
 
-Install [Bundler](http://bundler.io/).
+	gem update --system
+	gem install bundler
 
 Run:
 
