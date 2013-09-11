@@ -7,7 +7,7 @@ module PostUrlLiquidFilters
     if input[-1] == '/'
       return input
     end
-    input << '/'
+    input + '/'
   end
 
 end

@@ -2,8 +2,8 @@
 layout: nil
 ---
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-US" xml:base="{{ site.url | add_slash }}">
-	<id>{{ site.url }}/</id>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-US" xml:base="{{ site.url }}{{ site.root }}">
+	<id>{{ site.url }}{{ site.root }}</id>
 	<link type="application/atom+xml" rel="self" href="{{ site.url }}{{ page.url }}"/>
 	<link type="text/html" rel="alternate" href="{{ site.url }}{{ site.root }}"/>
 	<title>n12v.com: Nikita Vasilyev</title>
