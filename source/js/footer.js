@@ -185,24 +185,26 @@ if (view === VIEW.PAGE) {
 function loadDisqus() {
 	requestAnimationFrame(function() {
 		var disqus_thread = document.getElementById('disqus_thread');
+		var canonicalURL = 'http://n12v.com' + $('.article-current .entry-link').attr('href');
+
 		if (disqus_thread) {
+			if (canonicalURL === window.disqus_url) {
+				// Scenario: open article A, go to the home page, come back to article A.
+				return;
+			}
 			disqus_thread.parentNode.removeChild(disqus_thread);
 		}
 		var current = $('.article-current .comments');
 		current.append('<div id="disqus_thread"/>');
 
-		function canonicalURL() {
-			return 'http://n12v.com' + $('.article-current .entry-link').attr('href');
-		}
-
 		//window.disqus_identifier = location.pathname;
-		window.disqus_url = canonicalURL();
+		window.disqus_url = canonicalURL;
 		if (window.DISQUS) {
 			DISQUS.reset({
 				reload: true,
-				config: function () {
+				config: function() {
 					//this.page.identifier = canonicalURL();
-					this.page.url = canonicalURL();
+					this.page.url = canonicalURL;
 				}
 			});
 		} else {
