@@ -188,7 +188,7 @@ function loadDisqus() {
 		if (disqus_thread) {
 			disqus_thread.parentNode.removeChild(disqus_thread);
 		}
-		var current = $('.article-current .entry-more');
+		var current = $('.article-current .comments');
 		current.append('<div id="disqus_thread"/>');
 
 		function canonicalURL() {

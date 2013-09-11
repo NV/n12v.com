@@ -22,5 +22,10 @@
 	</div>
 	{% else %}
 		{{ content }}
+		<div class="entry-more{% unless index %} entry-more-expanded{% endunless %}">
+		{% unless index %}
+			{% include meta.html %}
+		{% endunless %}
+		</div>
 	{% endif %}
 </div>

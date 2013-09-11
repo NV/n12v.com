@@ -12,7 +12,7 @@ module ExcerptLiquidFilters
 
   def after_excerpt(input)
     split = input.split(SEPARATOR)
-    split[1] or nil
+    split[1] or ''
   end
 
   def has_excerpt(input)
