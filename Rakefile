@@ -101,7 +101,7 @@ task :gzip_and_upload => [DEST] do
     end
 
     gzip_path = "#{dest_path}.gz"
-    system_run("zopfli --i1000 -v -c #{dest_path} > #{gzip_path}")
+    system_run("zopfli --i2000 -v -c #{dest_path} > #{gzip_path}")
 
     # GZip increases size for small files
     size_orig = File.size(dest_path)
