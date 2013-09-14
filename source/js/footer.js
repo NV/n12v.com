@@ -166,7 +166,7 @@ function route(link) {
 					}
 					more.css('max-height', '');
 					setViewImmediately(VIEW.PAGE);
-					getScrollableRoot().scrollTop = $('#top').outerHeight();
+					getScrollableRoot().scrollTop = $('#top').outerHeight() + 1;
 					loadDisqus();
 				} else {
 					i++;
