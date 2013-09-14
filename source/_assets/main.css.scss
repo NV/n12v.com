@@ -139,6 +139,11 @@ a {
 }
 
 article {
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid #CCC;
+  border-top: 1px solid #F9F9F9;
+
   background: $bg-content;
   @include transition-duration($duration);
   @include transition-timing-function(ease-out);
@@ -277,13 +282,6 @@ $bg-border: #CED3E4;
   #headline {
     display: none;
   }
-}
-
-article {
-  //-webkit-transition: height 1s linear;
-  overflow: hidden;
-  position: relative;
-  border-bottom: 1px solid #CCC;
 }
 
 .shell-prompt:before,
