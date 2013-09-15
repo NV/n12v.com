@@ -53,28 +53,58 @@ h2 {
 h3 {
   font-size: 100%;
   font-weight: normal;
-  margin: 1.5em 0 .75em;
+  margin: 1.25em 0 .75em;
   text-transform: uppercase;
   letter-spacing: .1em;
 }
 h4 {
   font-size: 100%;
   font-weight: bold;
-  margin: 1.5em 0 .75em;
+  margin: 1.25em 0 .75em;
 }
 
 p, ul, ol, dl, blockquote {
   margin: 0 0 $margin-bottom;
 }
-blockquote {
-  padding-left: 2.1em;
-}
 p, li, blockquote {
   max-width: $content-width;
 }
 
-samp {
-  font-size: inherit;
+code {
+  font-family: $mono;
+  font-size: 92.85%;
+}
+pre > code {
+  font-size: 13px; // Without it font-size in Firefox is tiny :(
+}
+//table {
+//  border-collapse: collapse;
+//}
+th {
+  font-family: $serif;
+  text-align: left;
+  vertical-align: top;
+  padding-right: 1em;
+}
+td {
+  vertical-align: top;
+}
+pre {
+  margin: 0 0 $margin-bottom;
+  white-space: pre-wrap;
+  //font-size: 14px; // 'inherit' or 100% doesn't work for <pre>. I hate CSS.
+}
+
+blockquote {
+  padding-left: 2.1em;
+  color: #666;
+}
+blockquote:before {
+  content: '“';
+  float: left;
+  font: 300% $serif; // Might go off when Georgia is not available
+  margin-top: -0.05em;
+  text-indent: -0.6em;
 }
 
 abbr {
@@ -97,33 +127,11 @@ kbd {
   border-bottom-color: #AAA;
   border-top-color: #dbdbdb;
 }
-
-code {
-  font-family: $mono;
-  font-size: 92.85%;
-}
-pre > code {
-  font-size: 13px; // Without it font-size in Firefox is tiny :(
-}
 var {
   font-style: normal;
 }
-//table {
-//  border-collapse: collapse;
-//}
-th {
-  font-family: $serif;
-  text-align: left;
-  vertical-align: top;
-  padding-right: 1em;
-}
-td {
-  vertical-align: top;
-}
-pre {
-  margin: 0 0 $margin-bottom;
-  white-space: pre-wrap;
-  //font-size: 14px; // 'inherit' or 100% doesn't work for <pre>. I hate CSS.
+samp {
+  font-size: inherit;
 }
 
 #content {
@@ -217,7 +225,7 @@ $bg-border: #CED3E4;
   font: 180%/1.2 $serif normal normal;
   margin: 0;
   padding-top: 24px;
-  padding-bottom: 12px;
+  padding-bottom: 18px;
   vertical-align: top;
   color: #000;
   @include transition-property('font-size, line-height, padding');
