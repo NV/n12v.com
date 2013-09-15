@@ -114,18 +114,21 @@ abbr {
 // Inspired by http://meta.stackoverflow.com/questions/1939/kbd-elements-are-way-intrusive
 kbd {
   font-size: 13px;
-  padding: 0em 0.6em;
   font-family: $helvetica;
+  padding: 0 0.5em;
   background-color: #f7f7f7;
   color: #333;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 0 0 1px white inset;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 0 0 1px #fff inset;
   border-radius: 3px;
   display: inline-block;
-  margin: -1px 0.1em;
+  margin: -1px 0;
   white-space: nowrap;
   border: 1px solid #c9c9c9;
   border-bottom-color: #AAA;
   border-top-color: #dbdbdb;
+}
+kbd + kbd {
+  margin-left: -.2em;
 }
 var {
   font-style: normal;
