@@ -1,0 +1,58 @@
+---
+layout: post
+title: "Focus transition"
+date: 2013-09-16 22:00
+comments: true
+---
+{% assign ns = page.id | article_id %}
+<iframe width="800" height="450" src="http://www.youtube.com/embed/MyIE9vjy8Zo" frameborder="0" allowfullscreen></iframe>
+<!-- more -->
+<h2>Playground</h2>
+<style>
+#{{ ns }} td {vertical-align: middle; text-align: center; padding: 1em .2em;}
+#{{ ns }}_webkit {outline: 5px auto -webkit-focus-ring-color;}
+#{{ ns }}_shadow {display: inline-block; box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset; border-radius: 2px;}
+</style>
+<table style="width:100%">
+	<tr>
+		<td style="width:1%"><input type="range"></td>
+		<td rowspan="2"><input type="checkbox" checked></td>
+		<td>
+			<input type="url" value="http://n12v.com/" size="16">
+		</td>
+		<td rowspan="2">
+			<select>
+				<option>CSS</option>
+				<option>JS</option>
+				<option>HTML</option>
+			</select>
+		</td>
+		<td>
+			<input type="number" style="width:4em" value="1">
+		</td>
+	</tr>
+	<tr>
+		<td style="width:1%">
+			<input type="radio" name="focus_transition_radio" checked>
+			<input type="radio" name="focus_transition_radio">
+		</td>
+		<td><input type="color" size="6"></td>
+		<td><button>Placebo button</button></td>
+	</tr>
+</table>
+<h2>Why?</h2>
+<p>Keyboard navigation has a major downside: it’s not clear where the focus goes on <kbd>Tab</kbd> press.
+Animation makes the transition more transparent.</p>
+<h2>How?</h2>
+<p>Flying Focus creates an element that is moving when the focus event happens.</p>
+<p><code id="{{ ns }}_shadow">outline-color: -webkit-focus-ring-color</code> makes the element look like it has a focus. It only works in Safari and Blink.</p>
+<p>For all other browsers, box-shadow is used:</p>
+<pre><code id="{{ ns }}_shadow">box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset;
+border-radius: 3px;</code></pre>
+<p>Previously, I actually focused on the moving element. It affected focus and blur events on web pages making some dropdown menus unusable. Faking the focus solves the problem.</p>
+<p><code>pointer-events: none</code> achieves click-through effect.</p>
+<h2>Install</h2>
+<p>Flying Focus is available as a <a href="/focus-transition/flying-focus.js">standalone JS file</a> that you can include on your website.
+<a href="https://chrome.google.com/webstore/detail/flying-focus/koojelgeljpacclbmiflpcohjkbklplk">Chrome</a> and <a href="/focus-transition/FlyingFocus.safariextz">Safari</a> extensions enable Flying Focus on all websites.
+It’s all free and <a href="http://github.com/NV/flying-focus/">open-source</a>.</p>
+<script src="/focus-transition/flying-focus.js"></script>
