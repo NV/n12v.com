@@ -248,7 +248,7 @@ $bg-border: #CED3E4;
 }
 
 .entry-excerpt {
-  margin-bottom: 2.5em;
+  margin-bottom: 2em;
   @include transition-property('margin-bottom');
   @include transition-duration($duration);
   @include transition-timing-function(linear);
