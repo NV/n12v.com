@@ -9,9 +9,9 @@ comments: true
 <!-- more -->
 <h2>Playground</h2>
 <style>
-#{{ ns }} td {vertical-align: middle; text-align: center; padding: 1em .2em;}
-#{{ ns }}_webkit {outline: 5px auto -webkit-focus-ring-color;}
-#{{ ns }}_shadow {display: inline-block; box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset; border-radius: 2px;}
+#{{ ns }} td {vertical-align: middle; text-align: center; padding: 1em .2em}
+#{{ ns }}_webkit {outline: 5px auto -webkit-focus-ring-color}
+#{{ ns }}_osx_focusring {display: inline-block; box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset; border-radius: 2px}
 </style>
 <table style="width:100%;max-width:800px">
 	<tr>
@@ -45,9 +45,9 @@ comments: true
 Animation makes the transition more transparent.</p>
 <h2>How?</h2>
 <p>Flying Focus creates an element that is moving when the focus event happens.</p>
-<p><code id="{{ ns }}_shadow">outline-color: -webkit-focus-ring-color</code> makes the element look like it has a focus. It only works in Safari and Chrome.</p>
-<p>For all other browsers, box-shadow is used:</p>
-<pre><code id="{{ ns }}_shadow">box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset;
+<p><code id="{{ ns }}_webkit">outline: 5px auto -webkit-focus-ring-color</code> makes the element look like it has a focus. It only works in Safari and Chrome.</p>
+<p>Firefox doesn’t support <code>outline-style: auto</code> so box-shadow is used instead:</p>
+<pre><code id="{{ ns }}_osx_focusring">box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset;
 border-radius: 3px;</code></pre>
 <p>Previously, I actually focused on the moving element. It affected focus and blur events on web pages, making some dropdown menus unusable. Faking the focus solves the problem.</p>
 <p><code>pointer-events: none</code> achieves click-through effect.</p>
