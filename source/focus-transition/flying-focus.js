@@ -28,6 +28,15 @@ function offsetOf(elem) {
 var movingId = 0;
 var prevFocused = null;
 var isFirstFocus = true;
+var keyDownTime = 0;
+
+document.documentElement.addEventListener('keydown', function(event) {
+	var code = event.which;
+	// Show animation only upon Tab or Arrow keys press.
+	if (code === 9 || (code > 36 && code < 41)) {
+		keyDownTime = now();
+	}
+}, false);
 
 document.documentElement.addEventListener('focus', function(event) {
 	var target = event.target;
@@ -48,6 +57,10 @@ document.documentElement.addEventListener('focus', function(event) {
 
 	if (isFirstFocus) {
 		isFirstFocus = false;
+		return;
+	}
+
+	if (now() - keyDownTime > 42) {
 		return;
 	}
 
@@ -72,6 +85,10 @@ function onEnd() {
 	flyingFocus.classList.remove('flying-focus_visible');
 	prevFocused.classList.remove('flying-focus_target');
 	prevFocused = null;
+}
+
+function now() {
+	return new Date().valueOf();
 }
 
 
