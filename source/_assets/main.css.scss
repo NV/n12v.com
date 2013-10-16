@@ -231,7 +231,7 @@ $bg-border: #CED3E4;
   padding-bottom: 18px;
   vertical-align: top;
   color: #000;
-  @include transition-property('font-size, line-height, padding');
+  @include transition-property('font-size, line-height, padding-top, padding-left');
   @include transition-duration($duration);
   @include transition-timing-function(ease-out);
 }
