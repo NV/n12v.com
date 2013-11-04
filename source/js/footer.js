@@ -15,7 +15,7 @@ window.onerror = function(message, url, line, col, err) {
 			msg += ':' + col;
 		}
 	}
-	window.ga && ga('send', 'event', 'exception', msg);
+	ga('send', 'event', 'exception', msg);
 };
 
 /**
@@ -76,10 +76,10 @@ var VIEW = {
 
 
 function collapsePreviousArticle() {
-	if (view !== VIEW.PAGE) {
+	var prevArticle = $('.article-current');
+	if (prevArticle.length === 0) {
 		return;
 	}
-	var prevArticle = $('.article-current');
 	var more = prevArticle.find('.entry-more');
 	var excerptHeight = prevArticle.find('.entry-title').outerHeight() + prevArticle.find('.entry-excerpt').outerHeight() || 0;
 	var startHeight = window.innerHeight - excerptHeight || 0;
