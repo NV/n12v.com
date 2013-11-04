@@ -2,6 +2,22 @@
 
 var OPENING_ANIMATION_DURATION = 200; // Keep in sync with $duration in main.css.scss :(
 
+window.onerror = function(message, url, line, col, err) {
+	if (!window.ga) {
+		return;
+	}
+	var msg = '';
+	if (err && err.stack) {
+		msg = err.stack;
+	} else {
+		msg = message + '\n    ' + url + ':' + line;
+		if (typeof col !== 'undefined') {
+			msg += ':' + col;
+		}
+	}
+	window.ga && ga('send', 'event', 'exception', msg);
+};
+
 /**
  * @param {string} path
  * @return {string}
@@ -11,14 +27,13 @@ function fragmentUrlForPath(path) {
 }
 
 
-var isFirstCall = true;
 var prevPath = stripHash(location);
 
-$(window).on('popstate', function() {
+
+$(window).on('popstate', function(e) {
 	// WebKit and Blink call popstate event on page load, Firefox doesn't.
 	if (prevPath !== stripHash(location)) {
-		route(location);
-		onLocationChange();
+		route(location, onLocationChange);
 	}
 });
 
@@ -26,9 +41,11 @@ $(window).on('popstate', function() {
 $('body').on('click', '#title, .entry-link', function(e) {
 	if (isPlainClick(e)) {
 		e.preventDefault();
-		route(this);
-		pushState(this);
-		onLocationChange();
+		var link = this;
+		route(link, function() {
+			pushState(link);
+			onLocationChange();
+		});
 	}
 });
 
@@ -59,15 +76,14 @@ var VIEW = {
 
 
 function collapsePreviousArticle() {
-	var prevArticle = $('.article-current');
-	if (prevArticle.length === 0) {
+	if (view !== VIEW.PAGE) {
 		return;
 	}
+	var prevArticle = $('.article-current');
 	var more = prevArticle.find('.entry-more');
-	var excerptHeight = prevArticle.find('.entry-title').outerHeight() + prevArticle.find('.entry-excerpt').outerHeight();
-	var startHeight = window.innerHeight - excerptHeight;
+	var excerptHeight = prevArticle.find('.entry-title').outerHeight() + prevArticle.find('.entry-excerpt').outerHeight() || 0;
+	var startHeight = window.innerHeight - excerptHeight || 0;
 	more.css('height', startHeight + 'px');
-
 	prevArticle.removeClass('article-current');
 	more.transition({
 		height: 0
@@ -101,8 +117,22 @@ function getScrollableRoot() {
 
 /**
  * @param {Location|HTMLAnchorElement} link
+ * @param {Function} success
  */
-function route(link) {
+function route(link, success) {
+	function fail() {
+		clearTimeout(failTimeout);
+		if (DEBUG) {
+			console.warn('abort', link.href);
+		}
+		location.assign(link.href);
+	}
+	function done() {
+		clearTimeout(failTimeout);
+		success();
+	}
+	var failTimeout = setTimeout(fail, 1000);
+
 	if (link.pathname === '/') {
 		currentTransition = VIEW.HOME;
 
@@ -118,13 +148,18 @@ function route(link) {
 				setView(VIEW.HOME);
 				collapsePreviousArticle();
 			}
-		});
+			done();
+		}, fail);
 
 	} else {
 		currentTransition = VIEW.PAGE;
-
 		collapsePreviousArticle();
+
 		var article = findArticleByPath(link.pathname);
+		if (!article || article.length === 0) {
+			fail();
+			return;
+		}
 		article.addClass('article-current');
 		var more = article.find('.entry-more');
 		more.css('max-height', 0);
@@ -168,12 +203,12 @@ function route(link) {
 					setViewImmediately(VIEW.PAGE);
 					getScrollableRoot().scrollTop = $('#top').outerHeight() + 1;
 					loadDisqus();
+					done();
 				} else {
 					i++;
 				}
 			}
-		});
-
+		}, fail);
 	}
 }
 
@@ -242,10 +277,11 @@ function makeIdForPath(path) {
 function findArticleByPath(path) {
 	var id = makeIdForPath(path);
 	var element = document.getElementById(id);
-	if (!element) {
-		throw "Cannot find #" + id;
+	if (element) {
+		return $(element);
+	} else {
+		return null;
 	}
-	return $(element);
 }
 
 
@@ -265,7 +301,7 @@ cache[location.href] = document.title;
  * @param {string} url
  * @param {function} success
  */
-function fetch(url, success) {
+function fetch(url, success, fail) {
 	function fetched(elements) {
 		//setTimeout(function() {
 			document.title = cache[url];
@@ -282,6 +318,7 @@ function fetch(url, success) {
 
 	$.ajax(fragmentURL, {
 		type: 'GET',
+		timeout: 1000,
 		dataType: 'html'
 	}).done(function(data) {
 
@@ -298,12 +335,7 @@ function fetch(url, success) {
 
 		fetched(elements);
 
-	}).fail(function(data, a) {
-
-		console.warn('Fail', data, a, this);
-		location.assign(url);
-
-	});
+	}).fail(fail);
 }
 
 
@@ -313,7 +345,7 @@ var onComplete = null;
 // http://docs.unity3d.com/Documentation/Manual/AnimationBlendTrees.html
 
 /**
- * @param {string} path
+ * @param {string} newView
  */
 function setView(newView) {
 	if (newView === view) {
