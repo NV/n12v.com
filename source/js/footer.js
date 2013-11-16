@@ -1,6 +1,7 @@
 (function() {
 
 var OPENING_ANIMATION_DURATION = 200; // Keep in sync with $duration in main.css.scss :(
+var TIMEOUT = 2000;
 
 window.onerror = function(message, url, line, col, err) {
 	if (!window.ga || (!url && !line)) {
@@ -128,7 +129,7 @@ function route(link, success) {
 		clearTimeout(failTimeout);
 		success();
 	}
-	var failTimeout = setTimeout(fail, 1000);
+	var failTimeout = setTimeout(fail, TIMEOUT);
 
 	if (link.pathname === '/') {
 		currentTransition = VIEW.HOME;
@@ -315,7 +316,7 @@ function fetch(url, success, fail) {
 
 	$.ajax(fragmentURL, {
 		type: 'GET',
-		timeout: 1000,
+		timeout: TIMEOUT,
 		dataType: 'html'
 	}).done(function(data) {
 
