@@ -122,9 +122,6 @@ function getScrollableRoot() {
 function route(link, success) {
 	function fail() {
 		clearTimeout(failTimeout);
-		if (DEBUG) {
-			console.warn('abort', link.href);
-		}
 		location.assign(link.href);
 	}
 	function done() {
