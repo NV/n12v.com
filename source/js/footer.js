@@ -3,7 +3,7 @@
 var OPENING_ANIMATION_DURATION = 200; // Keep in sync with $duration in main.css.scss :(
 
 window.onerror = function(message, url, line, col, err) {
-	if (!window.ga) {
+	if (!window.ga || (!url && !line)) {
 		return;
 	}
 	var msg = '';
