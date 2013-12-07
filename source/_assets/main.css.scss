@@ -192,8 +192,7 @@ article {
 //}
 
 
-$top-text-color: #162866;
-$top-text-color-light: mix($top-text-color, $bg);
+$top-text-color: hsl(225, 20%, 50%);
 $top-link: mix($link, $bg);
 $bg-border: #CED3E4;
 //$top-link-color: hsl(hue($link), $top-text-color, );
@@ -328,7 +327,6 @@ $bg-border: #CED3E4;
 }
 
 #about {
-  color: $top-text-color-light;
   overflow: hidden;
   font-size: 75%;
 }
