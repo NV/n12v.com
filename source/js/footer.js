@@ -9,7 +9,7 @@ window['imageToggle'] = function(image) {
 	image.setAttribute('width', width.toString());
 	image.classList.toggle('image-toggle-min');
 	image.classList.toggle('image-toggle-max');
-}
+};
 
 
 (function() {
