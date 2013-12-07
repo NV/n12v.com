@@ -1,3 +1,17 @@
+//TODO: move this to <head>
+window['imageToggle'] = function(image) {
+	var width = parseInt(image.getAttribute('width'));
+	if (image.classList.contains('image-toggle-min')) {
+		width *= 2;
+	} else {
+		width /= 2;
+	}
+	image.setAttribute('width', width.toString());
+	image.classList.toggle('image-toggle-min');
+	image.classList.toggle('image-toggle-max');
+}
+
+
 (function() {
 
 var OPENING_ANIMATION_DURATION = 200; // Keep in sync with $duration in main.css.scss :(

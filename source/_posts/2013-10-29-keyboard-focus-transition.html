@@ -1,0 +1,352 @@
+---
+layout: post
+title: "Keyboard Focus Transition: Part 2"
+date: 2013-09-18 02:00
+comments: true
+private: true
+---
+{% assign ns = page.id | article_id %}
+<img src="/keyboard-focus-transition/animation.gif" width="505" class="image-toggle image-toggle-min" onclick="imageToggle(this)">
+
+<!-- more -->
+
+<p><small>Animation is slowed down twice</small></p>
+<style>
+#keyboard-focus-demo {
+	width: 100%;
+	max-width: 600px;
+	margin: 0;
+	padding: .5em 1em;
+	background: hsl(38, 33%, 86%);
+	border: 1px solid hsl(38, 30%, 80%);
+	border-top-color: hsl(38, 33%, 93%);
+}
+#keyboard-focus-demo h3 {
+	text-align: center;
+	letter-spacing: .3em;
+	margin: .6em 0 .2em;
+}
+#keyboard-focus-demo table {
+	width: 100%;
+	max-width: 600px;
+	margin: 0;
+	padding: .5em;
+}
+
+#{{ ns }} td {
+	padding: .2em 0;
+	vertical-align: middle;
+}
+#{{ ns }} label+label {
+	margin-left: 1em;
+}
+#{{ ns }} .dummy {
+	display: inline-block;
+}
+</style>
+<h2 id="playground">Playground</h2>
+<p style="background:hsl(38, 93%, 81%); border:1px solid hsl(38, 61%, 73%); padding:.5em 1em; margin-bottom:0">
+	<button onclick="play(this)" id="keyboard-focus-transition-play-button" style="font-size:14px; padding:2px 1em; margin-right:3em">Play</button>
+	<label><input type="radio" name="focus_radio" onclick="selectEffectFromUI(this.value)" value="focusSnail" id="focus-snail_toggler">Focus Snail</label>
+	<label><input type="radio" name="focus_radio" onclick="selectEffectFromUI(this.value)" value="focusHug" id="focus-hug_toggler">Focus Hug</label>
+	<label><input type="radio" name="focus_radio" onclick="selectEffectFromUI(this.value)" value="focusZoom" id="focus-zoom_toggler">Focus Zoom</label>
+</p>
+<table id="keyboard-focus-demo">
+	<tr>
+		<td>
+			<input class="dummy" value="dummy text field" style="width:200px">
+		</td>
+		<td rowspan="2">
+			<select class="dummy" multiple style="height:4.2em">
+				<option>UI</option>
+				<option>UX</option>
+				<option>accessibility</option>
+			</select>
+		</td>
+		<td style="text-align:center"><input class="dummy" type="range"></td>
+	</tr>
+	<tr>
+		<td>
+			<label><input class="dummy" type="radio" name="#{{ ns }}_dummy">CSS</label>
+			<label><input class="dummy" type="radio" name="#{{ ns }}_dummy">JS</label>
+			<label><input class="dummy" type="radio" name="#{{ ns }}_dummy">SVG</label>
+		</td>
+		<td style="text-align:center"><input class="dummy" type="url" value="http://n12v.com/" size="20"></td>
+	</tr>
+</table>
+
+<script>
+function selectEffectFromUI(name) {
+	window[name].enabled = true;
+
+	var names = ['focusSnail', 'focusHug', 'focusZoom'];
+	for (var i = 0; i < names.length; i++) {
+		if (names[i] !== name) {
+			console.info(names[i]);
+			window[names[i]].enabled = false;
+		}
+	}
+}
+
+function selectEffect(name) {
+	selectEffectFromUI(name);
+	setUI(name);
+}
+
+function setUI(name) {
+	window[name].enabled = true;
+	var radios = document.querySelectorAll('[name="focus_radio"]');
+	for (var i = 0; i < radios.length; i++) {
+		var radio = radios[i];
+		if (radio.value === name) {
+			radio.checked = true;
+			break;
+		}
+	}
+}
+
+
+//document.getElementById('focus-snail_toggler').addEventListener('click', function(e) {
+//	focusSnail.enabled = e.target.checked;
+//}, false);
+//
+//document.getElementById('focus-hug_toggler').addEventListener('click', function(e) {
+//	focusHug.enabled = e.target.checked;
+//}, false);
+//
+//document.getElementById('focus-zoom_toggler').addEventListener('click', function(e) {
+//	focusZoom.enabled = e.target.checked;
+//}, false);
+
+function wait(fn) {
+	setTimeout(fn, 100);
+}
+
+var dummies = document.querySelectorAll('#keyboard-focus-demo .dummy');
+//var deferred = new jQuery.Deferred;
+//deferred.then(function() {
+//}).then(function() {
+//})
+
+
+//function toggleFocusHug(on) {
+//	document.getElementById('focus-hug_toggler').checked = on;
+//	focusHug.enabled = on;
+//}
+
+function toggleFocusZoom(on) {
+	document.getElementById('focus-zoom_toggler').checked = on;
+	focusZoom.enabled = on;
+}
+
+function toggleFocusSnail(on) {
+	document.getElementById('focus-snail_toggler').checked = on;
+//	if (on) {
+//		focusSnail.initialize();
+//	} else {
+//		focusSnail.dispose();
+//	}
+}
+
+function id(name) {
+	return document.getElementById(name);
+}
+
+
+
+
+//toggleFocusHug(false);
+//toggleFocusZoom(false);
+
+var currentEffect = 'focusSnail';
+var prevFocused = null;
+
+function doFocus(current) {
+	current.focus();
+	var fn = window[currentEffect].trigger;
+	if (fn.length === 2) {
+		fn(prevFocused, current);
+	} else {
+		fn(current);
+	}
+	prevFocused = current;
+}
+
+
+function playQueue(inputs, onFinish) {
+	inputs = [].slice.call(inputs, 3);
+	shuffle(inputs);
+	var length = inputs.length;
+
+	function next(i) {
+		if (i >= length) {
+			onFinish();
+			return;
+		}
+		var current = inputs[i];
+		doFocus(current);
+		setTimeout(function() {
+			next(i + 1);
+		}, 400);
+	}
+
+	next(0);
+}
+
+
+function sequence(list) {
+	var length = list.length;
+	var i = 0;
+	function next() {
+		if (i >= length) {
+			return;
+		}
+		var current = list[i];
+		i++;
+		if (typeof current == 'function') {
+			current(next);
+		} else if (typeof current == 'number') {
+			setTimeout(next, current);
+		}
+	}
+	next();
+}
+
+
+function play(playButton) {
+	playButton.disabled = true;
+
+	focusSnail.enabled = false;
+	focusHug.enabled = false;
+	focusZoom.enabled = false;
+
+	function set(name) {
+		setUI(name);
+		currentEffect = name;
+	}
+
+
+	var list = [].slice.call(dummies, 0);
+	function nextInQueue(next) {
+		var inputs = list.slice(0, 3).concat(list[rand(3, 5)], list.slice(6));
+		playQueue(inputs, next);
+	}
+
+	prevFocused = playButton;
+
+	sequence([
+		function(next) {
+			set('focusSnail');
+			doFocus(id('focus-snail_toggler'));
+			next();
+		},
+		500,
+		nextInQueue,
+		500,
+		function(next) {
+			set('focusHug');
+			doFocus(id('focus-hug_toggler'));
+			next();
+		},
+		500,
+		nextInQueue,
+		500,
+		function(next) {
+			set('focusZoom');
+			doFocus(id('focus-zoom_toggler'));
+			next();
+		},
+		500,
+		nextInQueue,
+		500,
+		function() {
+			playButton.disabled = false;
+			selectEffect('focusSnail');
+			doFocus(id('focus-snail_toggler'));
+		}
+	]);
+}
+
+
+function dispatchEvents(element) {
+	dispatchTabPress(element);
+	dispatchFocus(element);
+}
+
+function dispatchFocus(element) {
+//	var e = document.createEvent('Event');
+//	e.initEvent('focus', true, true);
+//	element.dispatchEvent(e);
+	element.focus();
+}
+
+function dispatchTabPress(element) {
+	var event = crossBrowser_initKeyboardEvent('keydown', {
+		key: '\t'
+	});
+//	var event = document.createEvent("KeyboardEvent");
+//	event.initKeyboardEvent("keydown", true, true, window,	0, 0, 0, 0,	0, '\t'.charCodeAt(0));
+//	element.dispatchEvent(event); // doesn't bubble :(
+	document.documentElement.dispatchEvent(event);
+}
+
+function shuffle(array) {
+	var m = array.length, t, i;
+	while (m) {
+		i = Math.floor(Math.random() * m--);
+		t = array[m];
+		array[m] = array[i];
+		array[i] = t;
+	}
+}
+
+function rand(low, high) {
+	return low + Math.round((high - low) * Math.random());
+}
+
+window.onload = function() {
+	selectEffect('focusSnail');
+};
+</script>
+<style>
+.fake-focus {
+	outline: -webkit-focus-ring-color auto 5px;
+}
+input.fake-focus, textarea.fake-focus, select.fake-focus {
+	outline-offset: -2px;
+}
+input[type="button"].fake-focus, input[type="checkbox"].fake-focus, input[type="file"].fake-focus, input[type="hidden"].fake-focus, input[type="image"].fake-focus, input[type="radio"].fake-focus, input[type="reset"].fake-focus, input[type="search"].fake-focus, input[type="submit"].fake-focus {
+	outline-offset: 0;
+}
+</style>
+<p>I made 3 experiments to address some of the problems of <a href="/focus-transition/">Flying Focus</a></p>
+<h2>Focus Snail</h2>
+<p><a href="/focus-transition/">Flying Focus</a> has received good critique on <a href="https://news.ycombinator.com/item?id=6415822" rel="noreferrer nofollow">Hacker News</a>.</p>
+<blockquote>This demo seems to move faster than eye tracking speed, and the animation appears to skip or flicker, and it go too fast to follow, especially if the widgets are far apart.</blockquote>
+<p>True. I tried to increase animation duration but it seemed dull. Focus Snail doesn’t have this problem since it leaves a "trail", which becomes longer for spread out controls, thus easier to notice.</p>
+<h2>Focus Zoom</h2>
+<blockquote>Good idea, but the particular visualization (moving shadow) is a bit annoying.
+	I would go with something less in-your-face. Maybe a light shadow that blinks couple of
+	times on focus? I don't think the directional aspect of this is very important. Users
+	just need to know where the focus is now, not where it came from.</blockquote>
+<p>I agree, but I don’t like the blinking shadow idea.</p>
+<p>Unfortunately, <abbr>CSS</abbr> transforms don’t work with inline elements, which leads me to my next experiment:</p>
+
+<h2>Focus Hug</h2>
+<p>This one is not as cool as Focus Zoom but it work well with inline elements.</p>
+
+<h2>Install</h2>
+<p>All three scrips are available as standalone libraries with no external dependencies:</p>
+<ul>
+	<li><a href="/keyboard-focus-transition/focus-snail.js">focus-snail.js</a>, GitHug, Chrome extension</li>
+	<li><a href="/keyboard-focus-transition/focus-zoom.js">focus-zoom.js</a></li>
+	<li><a href="/keyboard-focus-transition/focus-hug.js">focus-hug.js</a></li>
+</ul>
+<p>All three scrips are on GitHub: <a href="">Focus Snail</a>, <a href="">Focus Zoom</a>, <a href="">Focus Hug</a></p>
+
+<h2>Disclaimer</h2>
+<p>I hope my experiments will serve an inspiration to implement similar effects on <abbr>OS</abbr> level. I implemented the prototypes using web technologies such as <abbr>CSS</abbr>, <abbr>JS</abbr>, and <abbr>SVG</abbr> (for Focus Snail) only because those are tools I’m familiar with. There is no real reason to limit them to web.</p>
+
+<script async src="/keyboard-focus-transition/focus-snail.js"></script>
+<script async src="/keyboard-focus-transition/focus-zoom.js"></script>
+<script async src="/keyboard-focus-transition/focus-hug.js"></script>
