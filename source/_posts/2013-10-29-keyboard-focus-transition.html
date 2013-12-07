@@ -46,10 +46,10 @@ private: true
 </style>
 <h2 id="playground">Playground</h2>
 <p style="background:hsl(38, 93%, 81%); border:1px solid hsl(38, 61%, 73%); padding:.5em 1em; margin-bottom:0">
-	<button onclick="play(this)" id="keyboard-focus-transition-play-button" style="font-size:14px; padding:2px 1em; margin-right:3em">Play</button>
+	<button onclick="playFocusDemo(this)" id="keyboard-focus-transition-play-button" style="font-size:14px; padding:2px 1em; margin-right:3em">Play</button>
 	<label><input type="radio" name="focus_radio" onclick="selectEffectFromUI(this.value)" value="focusSnail" id="focus-snail_toggler">Focus Snail</label>
-	<label><input type="radio" name="focus_radio" onclick="selectEffectFromUI(this.value)" value="focusHug" id="focus-hug_toggler">Focus Hug</label>
 	<label><input type="radio" name="focus_radio" onclick="selectEffectFromUI(this.value)" value="focusZoom" id="focus-zoom_toggler">Focus Zoom</label>
+	<label><input type="radio" name="focus_radio" onclick="selectEffectFromUI(this.value)" value="focusHug" id="focus-hug_toggler">Focus Hug</label>
 </p>
 <table id="keyboard-focus-demo">
 	<tr>
@@ -74,251 +74,6 @@ private: true
 		<td style="text-align:center"><input class="dummy" type="url" value="http://n12v.com/" size="20"></td>
 	</tr>
 </table>
-
-<script>
-function selectEffectFromUI(name) {
-	window[name].enabled = true;
-
-	var names = ['focusSnail', 'focusHug', 'focusZoom'];
-	for (var i = 0; i < names.length; i++) {
-		if (names[i] !== name) {
-			console.info(names[i]);
-			window[names[i]].enabled = false;
-		}
-	}
-}
-
-function selectEffect(name) {
-	selectEffectFromUI(name);
-	setUI(name);
-}
-
-function setUI(name) {
-	window[name].enabled = true;
-	var radios = document.querySelectorAll('[name="focus_radio"]');
-	for (var i = 0; i < radios.length; i++) {
-		var radio = radios[i];
-		if (radio.value === name) {
-			radio.checked = true;
-			break;
-		}
-	}
-}
-
-
-//document.getElementById('focus-snail_toggler').addEventListener('click', function(e) {
-//	focusSnail.enabled = e.target.checked;
-//}, false);
-//
-//document.getElementById('focus-hug_toggler').addEventListener('click', function(e) {
-//	focusHug.enabled = e.target.checked;
-//}, false);
-//
-//document.getElementById('focus-zoom_toggler').addEventListener('click', function(e) {
-//	focusZoom.enabled = e.target.checked;
-//}, false);
-
-function wait(fn) {
-	setTimeout(fn, 100);
-}
-
-var dummies = document.querySelectorAll('#keyboard-focus-demo .dummy');
-//var deferred = new jQuery.Deferred;
-//deferred.then(function() {
-//}).then(function() {
-//})
-
-
-//function toggleFocusHug(on) {
-//	document.getElementById('focus-hug_toggler').checked = on;
-//	focusHug.enabled = on;
-//}
-
-function toggleFocusZoom(on) {
-	document.getElementById('focus-zoom_toggler').checked = on;
-	focusZoom.enabled = on;
-}
-
-function toggleFocusSnail(on) {
-	document.getElementById('focus-snail_toggler').checked = on;
-//	if (on) {
-//		focusSnail.initialize();
-//	} else {
-//		focusSnail.dispose();
-//	}
-}
-
-function id(name) {
-	return document.getElementById(name);
-}
-
-
-
-
-//toggleFocusHug(false);
-//toggleFocusZoom(false);
-
-var currentEffect = 'focusSnail';
-var prevFocused = null;
-
-function doFocus(current) {
-	current.focus();
-	var fn = window[currentEffect].trigger;
-	if (fn.length === 2) {
-		fn(prevFocused, current);
-	} else {
-		fn(current);
-	}
-	prevFocused = current;
-}
-
-
-function playQueue(inputs, onFinish) {
-	inputs = [].slice.call(inputs, 3);
-	shuffle(inputs);
-	var length = inputs.length;
-
-	function next(i) {
-		if (i >= length) {
-			onFinish();
-			return;
-		}
-		var current = inputs[i];
-		doFocus(current);
-		setTimeout(function() {
-			next(i + 1);
-		}, 400);
-	}
-
-	next(0);
-}
-
-
-function sequence(list) {
-	var length = list.length;
-	var i = 0;
-	function next() {
-		if (i >= length) {
-			return;
-		}
-		var current = list[i];
-		i++;
-		if (typeof current == 'function') {
-			current(next);
-		} else if (typeof current == 'number') {
-			setTimeout(next, current);
-		}
-	}
-	next();
-}
-
-
-function play(playButton) {
-	playButton.disabled = true;
-
-	focusSnail.enabled = false;
-	focusHug.enabled = false;
-	focusZoom.enabled = false;
-
-	function set(name) {
-		setUI(name);
-		currentEffect = name;
-	}
-
-
-	var list = [].slice.call(dummies, 0);
-	function nextInQueue(next) {
-		var inputs = list.slice(0, 3).concat(list[rand(3, 5)], list.slice(6));
-		playQueue(inputs, next);
-	}
-
-	prevFocused = playButton;
-
-	sequence([
-		function(next) {
-			set('focusSnail');
-			doFocus(id('focus-snail_toggler'));
-			next();
-		},
-		500,
-		nextInQueue,
-		500,
-		function(next) {
-			set('focusHug');
-			doFocus(id('focus-hug_toggler'));
-			next();
-		},
-		500,
-		nextInQueue,
-		500,
-		function(next) {
-			set('focusZoom');
-			doFocus(id('focus-zoom_toggler'));
-			next();
-		},
-		500,
-		nextInQueue,
-		500,
-		function() {
-			playButton.disabled = false;
-			selectEffect('focusSnail');
-			doFocus(id('focus-snail_toggler'));
-		}
-	]);
-}
-
-
-function dispatchEvents(element) {
-	dispatchTabPress(element);
-	dispatchFocus(element);
-}
-
-function dispatchFocus(element) {
-//	var e = document.createEvent('Event');
-//	e.initEvent('focus', true, true);
-//	element.dispatchEvent(e);
-	element.focus();
-}
-
-function dispatchTabPress(element) {
-	var event = crossBrowser_initKeyboardEvent('keydown', {
-		key: '\t'
-	});
-//	var event = document.createEvent("KeyboardEvent");
-//	event.initKeyboardEvent("keydown", true, true, window,	0, 0, 0, 0,	0, '\t'.charCodeAt(0));
-//	element.dispatchEvent(event); // doesn't bubble :(
-	document.documentElement.dispatchEvent(event);
-}
-
-function shuffle(array) {
-	var m = array.length, t, i;
-	while (m) {
-		i = Math.floor(Math.random() * m--);
-		t = array[m];
-		array[m] = array[i];
-		array[i] = t;
-	}
-}
-
-function rand(low, high) {
-	return low + Math.round((high - low) * Math.random());
-}
-
-window.onload = function() {
-	selectEffect('focusSnail');
-};
-</script>
-<style>
-.fake-focus {
-	outline: -webkit-focus-ring-color auto 5px;
-}
-input.fake-focus, textarea.fake-focus, select.fake-focus {
-	outline-offset: -2px;
-}
-input[type="button"].fake-focus, input[type="checkbox"].fake-focus, input[type="file"].fake-focus, input[type="hidden"].fake-focus, input[type="image"].fake-focus, input[type="radio"].fake-focus, input[type="reset"].fake-focus, input[type="search"].fake-focus, input[type="submit"].fake-focus {
-	outline-offset: 0;
-}
-</style>
 <p>I made 3 experiments to address some of the problems of <a href="/focus-transition/">Flying Focus</a></p>
 <h2>Focus Snail</h2>
 <p><a href="/focus-transition/">Flying Focus</a> has received good critique on <a href="https://news.ycombinator.com/item?id=6415822" rel="noreferrer nofollow">Hacker News</a>.</p>
@@ -350,3 +105,168 @@ input[type="button"].fake-focus, input[type="checkbox"].fake-focus, input[type="
 <script async src="/keyboard-focus-transition/focus-snail.js"></script>
 <script async src="/keyboard-focus-transition/focus-zoom.js"></script>
 <script async src="/keyboard-focus-transition/focus-hug.js"></script>
+<script>
+(function() {
+	var dummies = document.querySelectorAll('#keyboard-focus-demo .dummy');
+	var currentEffect = 'focusSnail';
+	var prevFocused = null;
+
+	window.addEventListener('load', function() {
+		selectEffect('focusSnail');
+	}, false);
+
+	window['playFocusDemo'] = function(playButton) {
+		playButton.disabled = true;
+
+		focusSnail.enabled = false;
+		focusZoom.enabled = false;
+		focusHug.enabled = false;
+
+		function set(name) {
+			setUI(name);
+			currentEffect = name;
+		}
+
+		var list = [].slice.call(dummies, 0);
+		function nextInQueue(next) {
+			var inputs = list.slice(0, 3).concat(list[rand(3, 5)], list.slice(6));
+			playQueue(inputs, next);
+		}
+
+		prevFocused = playButton;
+
+		sequence([
+			function(next) {
+				set('focusSnail');
+				doFocus(id('focus-snail_toggler'));
+				next();
+			},
+			500,
+			nextInQueue,
+			500,
+			function(next) {
+				set('focusZoom');
+				doFocus(id('focus-zoom_toggler'));
+				next();
+			},
+			500,
+			nextInQueue,
+			500,
+			function(next) {
+				set('focusHug');
+				doFocus(id('focus-hug_toggler'));
+				next();
+			},
+			500,
+			nextInQueue,
+			500,
+			function() {
+				playButton.disabled = false;
+				selectEffect('focusSnail');
+				doFocus(id('focus-snail_toggler'));
+			}
+		]);
+	};
+
+	window['selectEffectFromUI'] = function selectEffectFromUI(name) {
+		window[name].enabled = true;
+
+		var names = ['focusSnail', 'focusZoom', 'focusHug'];
+		for (var i = 0; i < names.length; i++) {
+			if (names[i] !== name) {
+				console.info(names[i]);
+				window[names[i]].enabled = false;
+			}
+		}
+	};
+
+
+	function selectEffect(name) {
+		selectEffectFromUI(name);
+		setUI(name);
+	}
+
+
+	function setUI(name) {
+		window[name].enabled = true;
+		var radios = document.querySelectorAll('[name="focus_radio"]');
+		for (var i = 0; i < radios.length; i++) {
+			var radio = radios[i];
+			if (radio.value === name) {
+				radio.checked = true;
+				break;
+			}
+		}
+	}
+
+
+	function doFocus(current) {
+		current.focus();
+		var fn = window[currentEffect].trigger;
+		if (fn.length === 2) {
+			fn(prevFocused, current);
+		} else {
+			fn(current);
+		}
+		prevFocused = current;
+	}
+
+
+	function playQueue(inputs, onFinish) {
+		inputs = [].slice.call(inputs, 3);
+		shuffle(inputs);
+		var length = inputs.length;
+
+		function next(i) {
+			if (i >= length) {
+				onFinish();
+				return;
+			}
+			var current = inputs[i];
+			doFocus(current);
+			setTimeout(function() {
+				next(i + 1);
+			}, 400);
+		}
+
+		next(0);
+	}
+
+
+	function sequence(list) {
+		var length = list.length;
+		var i = 0;
+		function next() {
+			if (i >= length) {
+				return;
+			}
+			var current = list[i];
+			i++;
+			if (typeof current == 'function') {
+				current(next);
+			} else if (typeof current == 'number') {
+				setTimeout(next, current);
+			}
+		}
+		next();
+	}
+
+	function shuffle(array) {
+		var m = array.length, t, i;
+		while (m) {
+			i = Math.floor(Math.random() * m--);
+			t = array[m];
+			array[m] = array[i];
+			array[i] = t;
+		}
+	}
+
+	function rand(low, high) {
+		return low + Math.round((high - low) * Math.random());
+	}
+
+	function id(name) {
+		return document.getElementById(name);
+	}
+})();
+</script>
