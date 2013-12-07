@@ -6,10 +6,10 @@ layout: nil
 
 <div id="content">
 	{% assign index = true %}
-	{% for post in site.posts %}
+	{% for post in site.posts %}{% unless post.private %}
 	{% assign content = post.content %}
 	<article id="{{ post.id | article_id }}">
 		{% include article.html %}
 	</article>
-	{% endfor %}
+	{% endunless %}{% endfor %}
 </div>

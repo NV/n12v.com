@@ -12,7 +12,7 @@ layout: nil
 		<name>{{ site.author }}</name>
 	</author>
 	<link rel="hub" href="http://n12v.superfeedr.com/"/>
-	{% for post in site.posts limit: 20 %}
+	{% for post in site.posts limit: 20 %}{% unless post.private %}
 	<entry>
 		<id>{{ site.url }}{{ post.url | add_slash }}</id>
 		<link type="text/html" rel="alternate" href="{{ site.url }}{{ post.url | add_slash }}"/>
@@ -21,5 +21,5 @@ layout: nil
 		<updated>{{ post.path | file_date | date_to_xmlschema }}</updated>
 		<content type="html"><![CDATA[{{ post.content | expand_urls: site.url | cdata_escape }}]]></content>
 	</entry>
-	{% endfor %}
+	{% endunless %}{% endfor %}
 </feed>
