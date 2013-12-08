@@ -10,7 +10,6 @@ private: true
 
 <!-- more -->
 
-<p><small>Animation is slowed down twice</small></p>
 <style>
 #keyboard-focus-demo {
 	width: 100%;
@@ -77,10 +76,10 @@ private: true
 <p>I made 3 experiments to address some of the problems of <a href="/focus-transition/">Flying Focus</a></p>
 <h2>Focus Snail</h2>
 <p><a href="/focus-transition/">Flying Focus</a> has received good critique on <a href="https://news.ycombinator.com/item?id=6415822" rel="noreferrer nofollow">Hacker News</a>.</p>
-<blockquote>This demo seems to move faster than eye tracking speed, and the animation appears to skip or flicker, and it go too fast to follow, especially if the widgets are far apart.</blockquote>
+<blockquote cite="https://news.ycombinator.com/item?id=6421915">This demo seems to move faster than eye tracking speed, and the animation appears to skip or flicker, and it go too fast to follow, especially if the widgets are far apart.</blockquote>
 <p>True. I tried to increase animation duration but it seemed dull. Focus Snail doesn’t have this problem since it leaves a "trail", which becomes longer for spread out controls, thus easier to notice.</p>
 <h2>Focus Zoom</h2>
-<blockquote>Good idea, but the particular visualization (moving shadow) is a bit annoying.
+<blockquote cite="https://news.ycombinator.com/item?id=6417829">Good idea, but the particular visualization (moving shadow) is a bit annoying.
 	I would go with something less in-your-face. Maybe a light shadow that blinks couple of
 	times on focus? I don't think the directional aspect of this is very important. Users
 	just need to know where the focus is now, not where it came from.</blockquote>
@@ -91,13 +90,8 @@ private: true
 <p>This one is not as cool as Focus Zoom but it work well with inline elements.</p>
 
 <h2>Install</h2>
-<p>All three scrips are available as standalone libraries with no external dependencies:</p>
-<ul>
-	<li><a href="/keyboard-focus-transition/focus-snail.js">focus-snail.js</a>, GitHug, Chrome extension</li>
-	<li><a href="/keyboard-focus-transition/focus-zoom.js">focus-zoom.js</a></li>
-	<li><a href="/keyboard-focus-transition/focus-hug.js">focus-hug.js</a></li>
-</ul>
-<p>All three scrips are on GitHub: <a href="">Focus Snail</a>, <a href="">Focus Zoom</a>, <a href="">Focus Hug</a></p>
+<p>All three scrips are on GitHub: <a href="http://github.com/NV/focus-snail">Focus Snail</a>, <a href="http://github.com/NV/focus-zoom">Focus Zoom</a>, <a href="http://github.com/NV/focus-hug">Focus Hug</a></p>
+<p>Focus Snail is also available as a <a href="">Chrome extension</a>.</p>
 
 <h2>Disclaimer</h2>
 <p>I hope my experiments will serve an inspiration to implement similar effects on <abbr>OS</abbr> level. I implemented the prototypes using web technologies such as <abbr>CSS</abbr>, <abbr>JS</abbr>, and <abbr>SVG</abbr> (for Focus Snail) only because those are tools I’m familiar with. There is no real reason to limit them to web.</p>
