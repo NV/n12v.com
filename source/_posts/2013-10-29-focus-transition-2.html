@@ -14,7 +14,7 @@ private: true
 #keyboard-focus-demo {
 	width: 100%;
 	max-width: 600px;
-	margin: 0 0 1.25em 0;
+	margin: 0 0 2em 0;
 	padding: .5em 1em;
 	background: hsl(38, 33%, 86%);
 	border: 1px solid hsl(38, 30%, 80%);
@@ -84,7 +84,7 @@ private: true
 	times on focus? I don't think the directional aspect of this is very important. Users
 	just need to know where the focus is now, not where it came from.</blockquote>
 <p>I agree, but I don’t like the blinking shadow idea. I experimented with Focus Zoom, which scales the focused element to make it bounce.</p>
-<p>Unfortunately, it doesn’t work with <code>display:inline</code> since <a href="https://bugs.webkit.org/show_bug.cgi?id=58965"><abbr>CSS</abbr> transforms don’t work with inline elements</a>,
+<p>Focus Zoom uses <abbr>CSS</abbr> transforms that unfortunately <a href="https://bugs.webkit.org/show_bug.cgi?id=58965">don’t work with inline elements</a>,
 	which led me to my next experiment:</p>
 
 <h2>Focus Hug</h2>
