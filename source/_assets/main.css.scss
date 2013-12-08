@@ -382,6 +382,7 @@ $bg-border: #CED3E4;
 .image-toggle {
 	border: 1px solid $bg;
 	box-sizing: content-box;
+	max-width: 100%;
 	transition: width .1s cubic-bezier(0,.9,.2,1);
 }
 .image-toggle:hover,
