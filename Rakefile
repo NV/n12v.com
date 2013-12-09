@@ -120,6 +120,9 @@ task :gzip_and_upload => [DEST] do
 
   def s3_sync
     system_run("s3cmd sync --cf-invalidate --acl-public --no-preserve --delete-removed ./#{DEST}/ s3://#{HOST}")
+    # TODO: Get a list of files that have been sinced and set 'Content-Encoding: gzip' them.
+    # Maybe use a different lib for Amazon Web Services.
+    #
     # --dry-run
   end
 
