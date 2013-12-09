@@ -83,20 +83,20 @@ private: true
 	I would go with something less in-your-face. Maybe a light shadow that blinks couple of
 	times on focus? I don't think the directional aspect of this is very important. Users
 	just need to know where the focus is now, not where it came from.</blockquote>
-<p>I agree, but I don’t like the blinking shadow idea. I experimented with Focus Zoom, which scales the focused element to make it bounce.</p>
+<p>I agree, but I don’t like the blinking shadow idea. I experimented with Focus Zoom, which magnifies the focused element then gradually returns it to its original size.</p>
 <p>Focus Zoom uses <abbr>CSS</abbr> transforms that unfortunately <a href="https://bugs.webkit.org/show_bug.cgi?id=58965">don’t work with inline elements</a>,
 	which led me to my next experiment:</p>
 
 <h2>Focus Hug</h2>
-<p>This one only changes the size of the focus ring, keeping the size of the focused element intact.
-It doesn’t look as good as Focus Zoom but it works well with inline elements.</p>
+<p>This prototype only changes the size of the focus box, keeping the size of the focused element intact.
+It’s not as aesthetically appealing as Focus Zoom, but it works well with inline elements.</p>
 
 <h2>Install</h2>
 <p>All three scripts are on GitHub:
 	<a href="https://github.com/NV/focus-snail">Focus Snail</a>,
 	<a href="https://github.com/NV/focus-zoom">Focus Zoom</a>,
 	<a href="https://github.com/NV/focus-hug">Focus Hug</a>.</p>
-<p>Focus Snail is also available as a <a href="">Chrome extension</a>.</p>
+<p>Focus Snail is also available as a <a href="https://chrome.google.com/webstore/detail/bplpobmpcnpddpabcpfnddhimhjicgpc">Chrome extension</a>.</p>
 
 <h2>Disclaimer</h2>
 <p>I hope my experiments will serve as inspiration to implement similar effects on an <abbr>OS</abbr> level.
