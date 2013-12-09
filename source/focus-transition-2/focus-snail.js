@@ -35,7 +35,6 @@ function trigger(prevFocused, target) {
 
 	var distance = dist(prev.left, prev.top, current.left, current.top);
 	var duration = animationDuration(distance);
-	console.info(duration);
 
 	function setup() {
 		var scroll = scrollOffset();
@@ -198,10 +197,10 @@ var gradient = null;
 
 function htmlFragment() {
 	var div = doc.createElement('div');
-	div.innerHTML = '<svg id="focus-snail_svg" width="1000" height="800" spreadMethod="repeat">\
+	div.innerHTML = '<svg id="focus-snail_svg" width="1000" height="800">\
 		<linearGradient id="focus-snail_gradient">\
 			<stop id="focus-snail_start" offset="0%" stop-color="rgb(91, 157, 217)" stop-opacity="0"/>\
-			<stop id="focus-snail_middle" offset="80%" stop-color="rgb(91, 157, 217)" stop-opacity="0.6"/>\
+			<stop id="focus-snail_middle" offset="80%" stop-color="rgb(91, 157, 217)" stop-opacity="0.8"/>\
 			<stop id="focus-snail_end" offset="100%" stop-color="rgb(91, 157, 217)" stop-opacity="0"/>\
 		</linearGradient>\
 		<polygon id="focus-snail_polygon" fill="url(#focus-snail_gradient)"/>\
@@ -228,9 +227,7 @@ function getId(elem, name) {
 
 
 function onEnd() {
-	console.info('focusSnail: onEnd', animationId);
 	if (animationId) {
-//		console.trace();
 		cancelAnimationFrame(animationId);
 		animationId = 0;
 		svg.classList.remove('focus-snail_visible');
@@ -254,7 +251,6 @@ function animate(onStep, duration) {
 				loop();
 			}
 		});
-		console.log('start', animationId);
 	})();
 }
 

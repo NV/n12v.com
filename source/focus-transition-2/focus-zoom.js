@@ -1,11 +1,12 @@
-window.focusZoom = (function() {
+var focusZoom = (function() {
+	'use strict';
 
-	var result = {
-		trigger: focusZoom,
+	var DURATION = 200;
+
+	var focusZoom = {
+		trigger: trigger,
 		enabled: true
 	};
-
-	var DURATION = 300;
 
 	var prevFocused = null;
 	var docElem = document.documentElement;
@@ -25,10 +26,9 @@ window.focusZoom = (function() {
 	}, false);
 
 
-	function focusZoom(target) {
-		abort();
+	function trigger(target) {
+		onEnd();
 		prevFocused = target;
-
 		setTransform(target, 'scale(1.4)');
 		requestAnimationFrame(function() {
 			enableTransition(target);
@@ -43,7 +43,7 @@ window.focusZoom = (function() {
 
 
 	docElem.addEventListener('focus', function(event) {
-		if (!result.enabled) {
+		if (!focusZoom.enabled) {
 			return;
 		}
 
@@ -51,16 +51,16 @@ window.focusZoom = (function() {
 			return;
 		}
 
-		focusZoom(event.target);
+		trigger(event.target);
 	}, true);
 
 
 	docElem.addEventListener('blur', function() {
-		abort();
+		onEnd();
 	}, true);
 
 
-	function abort() {
+	function onEnd() {
 		if (!prevFocused) return;
 		setTransform(prevFocused, '');
 		disableTransition(prevFocused);
@@ -79,5 +79,5 @@ window.focusZoom = (function() {
 		element.style[webkitPrefix ? 'webkitTransform' : 'transform'] = value;
 	}
 
-	return result;
+	return focusZoom;
 })();
