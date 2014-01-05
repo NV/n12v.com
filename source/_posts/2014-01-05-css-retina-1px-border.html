@@ -3,15 +3,43 @@ layout: post
 title: "CSS, Retina, and 1 Device Pixel Border"
 date: 2014-01-05 03:10
 comments: true
-private: true
 ---
 {% assign ns = page.id | article_id %}
-
-<pre style="border-style: solid; border-width: 1px; -webkit-border-image: url(/css-retina-1px-border/pixel.gif) 2 repeat; border-image: url(/css-retina-1px-border/pixel.gif) 2 repeat; padding: .4em 1em; display: inline-block">
-border-style: solid;
-border-width: 1px;
--webkit-border-image: url(pixel.gif) 2 repeat;
-border-image: url(pixel.gif) 2 repeat;
+<style>.thin-border {
+	border: 1px solid black;
+}
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+	.thin-border {
+		-webkit-border-image: url(/{{page.id}}/border.gif) 2 repeat;
+		border-image: url(/{{page.id}}/border.gif) 2 repeat;
+	}
+}
+.code-border {
+	padding: .4em 1em;
+	display: inline-block;
+}</style>
+<pre class="code-border thin-border" style="display:inline-block;padding: .4em 1em;margin-bottom:2em">
+border: 1px solid black;
+-webkit-border-image: url(border.gif) 2 repeat;
+border-image: url(border.gif) 2 repeat;
 </pre>
-<p>pixel.gif is 6&times;6 pixels image:</p>
-<img width="96" class="pixelated" src="/css-retina-1px-border/slided.png">
+<p>border.gif is 6&times;6 pixels image:</p>
+<p><a href="http://border-image.com/#%7B%22src%22%3A%22http%3A%2F%2Fn12v.com%2Fcss-retina-1px-border%2Fborder.gif%22%2C%22linkBorder%22%3Afalse%2C%22borderWidth%22%3A%5B1%2C1%2C1%2C1%5D%2C%22imageOffset%22%3A%5B2%2C2%2C2%2C2%5D%2C%22fill%22%3Afalse%2C%22setRepat%22%3Afalse%2C%22repeat%22%3A%5B%22repeat%22%2C%22repeat%22%5D%2C%22scaleFactor%22%3A50%2C%22setRepeat%22%3Atrue%7D"><img width="96" class="pixelated" src="/{{page.id}}/slided.png"><br>
+border-image.com</a> demonstrates how it’s sliced.</p>
+<!-- more -->
+<h3>Non-retina compatibility?</h3>
+<p>On non-retina screens this doesn’t look good: <img class="pixelated" style="vertical-align: middle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAASCAAAAABkh0FCAAAAAnRSTlMA/1uRIrUAAAAYSURBVHgBY7AFgzIMMLASEOo/BhiVwAAAbJUyxICDawoAAAAASUVORK5CYII=">. I.e. border becomes half-transparent. Fix:</p>
+<pre class="thin-border code-border">
+.thin-border {
+	border: 1px solid black;
+}
+<a href="http://css-tricks.com/snippets/css/retina-display-media-query/">@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)</a> {
+	.thin-border {
+		-webkit-border-image: url(border.gif) 2 repeat;
+		border-image: url(border.gif) 2 repeat;
+	}
+}
+</pre>
+<h3>Inline elements? <span class="thin-border">Yep</span>.</h3>
+<h3>Browsers support</h3>
+<p>I’ve tested in on Chrome 31, Safari 7, Firefox 26, and iOS 7 &mdash; all works.</p>
