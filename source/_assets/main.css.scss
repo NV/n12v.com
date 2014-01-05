@@ -405,6 +405,16 @@ $bg-border: #CED3E4;
   background: hsl(324, 62%, 93%)
 }
 
+.pixelated {
+	image-rendering:optimizeSpeed;             /* Legal fallback */
+	image-rendering:-moz-crisp-edges;          /* Firefox        */
+	image-rendering:-webkit-optimize-contrast; /* Safari         */
+	image-rendering:optimize-contrast;         /* CSS3 Proposed  */
+	image-rendering:crisp-edges;               /* CSS4 Proposed  */
+	image-rendering:pixelated;                 /* CSS4 Proposed  */
+	-ms-interpolation-mode:nearest-neighbor;   /* IE8+           */
+}
+
 //@media only screen and (min-width: 1000px) {
 //  html {font-size: 17px}
 //}
