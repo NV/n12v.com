@@ -1,10 +1,10 @@
-{% assign published = page.date %}
-{% assign updated = page.path | file_date %}
+{% assign published = page.date | date: "%B %d, %Y" %}
+{% assign updated = page.path | file_date | date: "%B %d, %Y" %}
 <div class="meta vcard">
-	Published <time class="published" datetime="{{ published | date_to_xmlschema }}">{{ published | date: "%B %d, %Y" }}</time>
+	Published <time class="published" datetime="{{ published | date_to_xmlschema }}">{{ published }}</time>
 	by <address class="fn">{{ site.author }}</address>
 	{% if published != updated %}
-		&middot; Updated <time class="updated" datetime="{{ updated | date_to_xmlschema }}">{{ updated | date: "%B %d, %Y" }}</time>
+		&middot; Updated <time class="updated" datetime="{{ updated | date_to_xmlschema }}">{{ updated }}</time>
 	{% endif %}
 </div>
 <div class="comments"></div>
