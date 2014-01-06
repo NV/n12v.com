@@ -1,45 +1,103 @@
 ---
 layout: post
-title: "CSS, Retina, and 1 Device Pixel Border"
+title: "CSS, Retina, and border-width of One Physical Pixel"
 date: 2014-01-05 03:10
 comments: true
 ---
+
+<h2>Half-pixel border</h2>
+<pre style="border: 0.5px solid black"><code>border: 0.5px solid black;</code></pre>
+<dl>
+	<dt>Cons:</dt>
+	<dd>Doesn’t work, border-width must be an integer.</dd>
+</dl>
+<!-- more -->
 {% assign ns = page.id | article_id %}
-<style>.thin-border {
-	border: 1px solid black;
-}
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-	.thin-border {
-		-webkit-border-image: url(/{{page.id}}/border.gif) 2 repeat;
-		border-image: url(/{{page.id}}/border.gif) 2 repeat;
-	}
-}
-.code-border {
-	padding: .4em 1em;
+<style>#{{ ns }} pre {
 	display: inline-block;
+	padding: .4em 1em;
 }</style>
-<pre class="code-border thin-border" style="margin-bottom:2em">
-border: 1px solid black;
--webkit-border-image: url(border.gif) 2 repeat;
-border-image: url(border.gif) 2 repeat;
-</pre>
+
+<h2>border-image</h2>
+<pre class="retina-border-code" style="border: 1px solid rgba(0, 0, 0, 0.4); -webkit-border-image: url(/{{page.id}}/border.gif) 2 repeat; border-image: url(/{{page.id}}/border.gif) 2 repeat;"><code>border-width: 1px;
+border-image: url(border.gif) 2 repeat;</code></pre>
 <p>border.gif is a 6&times;6 pixel image:</p>
 <p><a href="http://border-image.com/#%7B%22src%22%3A%22http%3A%2F%2Fn12v.com%2Fcss-retina-1px-border%2Fborder.gif%22%2C%22linkBorder%22%3Afalse%2C%22borderWidth%22%3A%5B1%2C1%2C1%2C1%5D%2C%22imageOffset%22%3A%5B2%2C2%2C2%2C2%5D%2C%22fill%22%3Afalse%2C%22setRepat%22%3Afalse%2C%22repeat%22%3A%5B%22repeat%22%2C%22repeat%22%5D%2C%22scaleFactor%22%3A50%2C%22setRepeat%22%3Atrue%7D"><img width="96" class="pixelated" src="/{{page.id}}/slided.png"><br>
 border-image.com</a> demonstrates how it’s sliced.</p>
-<!-- more -->
-<h3>Non-retina compatibility?</h3>
-<p>On non-retina screens this doesn’t look good: <img class="pixelated" style="vertical-align: middle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAASCAAAAABkh0FCAAAAAnRSTlMA/1uRIrUAAAAYSURBVHgBY7AFgzIMMLASEOo/BhiVwAAAbJUyxICDawoAAAAASUVORK5CYII="> (i.e. border becomes half-transparent). A fix:</p>
-<pre class="thin-border code-border">
-.thin-border {
-	border: 1px solid black;
+<dl>
+	<dt>Props:</dt>
+	<dd>Not a lot of code</dd>
+	<dt>Cons:</dt>
+	<dd>External image</dd>
+</dl>
+
+<p><a href="http://atirip.com/2013/09/22/yes-we-can-do-fraction-of-a-pixel/"></a></p>
+<h2>Multiple background images</h2>
+<pre class="retina-border-code" style="background: linear-gradient(180deg, black, black 50%, transparent 50%) top left / 100% 1px no-repeat,
+	linear-gradient(-90deg, black, black 50%, transparent 50%) top right / 1px 100% no-repeat,
+	linear-gradient(0deg, black, black 50%, transparent 50%) bottom right / 100% 1px no-repeat,
+	linear-gradient(90deg, black, black 50%, transparent 50%) bottom left / 1px 100% no-repeat;"><code>background:
+	linear-gradient(180deg, black, black 50%, transparent 50%) top    left  / 100% 1px no-repeat,
+	linear-gradient(90deg,  black, black 50%, transparent 50%) top    right / 1px 100% no-repeat,
+	linear-gradient(0,      black, black 50%, transparent 50%) bottom right / 100% 1px no-repeat,
+	linear-gradient(-90deg, black, black 50%, transparent 50%) bottom left  / 1px 100% no-repeat;</code></pre>
+<p>“<a href="https://excellenteasy.com/devblog/posts/how-to-target-physical-pixels-on-retina-screens-with-css/">How to target physical pixels on retina screens with CSS</a>” describes how to draw a line. I repeated it 3 times to draw a rectangle.</p>
+<dl>
+	<dt>Props:</dt>
+	<dd>No external images</dd>
+	<dt>Cons:</dt>
+	<dd>Cumbersome syntax, although it can be abstracted out with <abbr>CSS</abbr> preprocessors.</dd>
+</dl>
+<h2>Scale up and down</h2>
+<style>
+#{{ ns }} .border-scale {
+	position: relative;
 }
-<a href="http://css-tricks.com/snippets/css/retina-display-media-query/">@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)</a> {
+#{{ ns }} .border-scale:before {
+	-webkit-transform: scale(0.5);
+	-webkit-transform-origin: 0 0;
+	content: '';
+	border: 1px solid black;
+	transform: scale(0.5);
+	transform-origin: 0 0;
+	width: 200%;
+	height: 200%;
+	position: absolute;
+	left: 0;
+	top: 0;
+}</style>
+<pre class="border-scale"><code>.retina-border-scale {
+	position: relative;
+}
+.retina-border-scale:before {
+	content: '';
+	border: 1px solid black;
+	transform: scale(0.5);
+	transform-origin: 0 0;
+	width: 200%;
+	height: 200%;
+	position: absolute;
+	left: 0;
+	top: 0;
+}</code></pre>
+<p>“<a href="http://atirip.com/2013/09/22/yes-we-can-do-fraction-of-a-pixel/">Yes We Can Do Fraction of a Pixel</a>” explains the method in great details.</p>
+<dl>
+	<dt>Props:</dt>
+	<dd>No external images</dd>
+	<dt>Cons:</dt>
+	<dd>Breaks text selection</dd>
+	<dd>Forces relative or absolute positioning; doesn’t work for <code>&lt;td&gt;</code></dd>
+</dl>
+<h2>Browsers supported</h2>
+<p>I tested in Chrome 31, Safari 7, Firefox 26, and iOS 7 &mdash; all worked.</p>
+<h2>Is it non-retina backward compatible?</h2>
+<p>No. For instance, this is how it looks in non-retina Safari: <img class="pixelated" style="vertical-align: middle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAASCAAAAABkh0FCAAAAAnRSTlMA/1uRIrUAAAAYSURBVHgBY7AFgzIMMLASEOo/BhiVwAAAbJUyxICDawoAAAAASUVORK5CYII="> (i.e. border becomes half-transparent and corners have different colors). <a href="http://css-tricks.com/snippets/css/retina-display-media-query/">Media queries</a> to the rescue:</p>
+<pre class="border-scale"><code>.thin-border {
+	border: 1px solid rgba(0, 0, 0, 0.5);
+}
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
 	.thin-border {
-		-webkit-border-image: url(border.gif) 2 repeat;
 		border-image: url(border.gif) 2 repeat;
 	}
 }
-</pre>
-<h3>Inline elements? <span class="thin-border">Yep</span>.</h3>
-<h3>Browsers supported</h3>
-<p>I’ve tested in on Chrome 31, Safari 7, Firefox 26, and iOS 7 &mdash; all works.</p>
+</code></pre>

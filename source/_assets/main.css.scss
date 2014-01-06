@@ -260,6 +260,10 @@ $bg-border: #CED3E4;
   @include transition-property('margin-bottom');
   @include transition-duration($duration);
   @include transition-timing-function(linear);
+
+	& > h2:first-child {
+		margin-top: .5em;
+	}
 }
 
 .entry-more {
