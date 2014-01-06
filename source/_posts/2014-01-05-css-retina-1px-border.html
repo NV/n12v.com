@@ -6,18 +6,17 @@ comments: true
 ---
 
 <h2>Half-pixel border</h2>
+{% assign ns = page.id | article_id %}
+<style>#{{ ns }} pre {
+	display: inline-block;
+	padding: .4em 1em;
+}</style>
 <pre style="border: 0.5px solid black"><code>border: 0.5px solid black;</code></pre>
 <dl>
 	<dt>Cons:</dt>
 	<dd>Doesn’t work, border-width must be an integer.</dd>
 </dl>
 <!-- more -->
-{% assign ns = page.id | article_id %}
-<style>#{{ ns }} pre {
-	display: inline-block;
-	padding: .4em 1em;
-}</style>
-
 <h2>border-image</h2>
 <pre class="retina-border-code" style="border: 1px solid rgba(0, 0, 0, 0.4); -webkit-border-image: url(/{{page.id}}/border.gif) 2 repeat; border-image: url(/{{page.id}}/border.gif) 2 repeat;"><code>border-width: 1px;
 border-image: url(border.gif) 2 repeat;</code></pre>
@@ -90,8 +89,8 @@ border-image.com</a> demonstrates how it’s sliced.</p>
 </dl>
 <h2>Browsers supported</h2>
 <p>I tested in Chrome 31, Safari 7, Firefox 26, and iOS 7 &mdash; all worked.</p>
-<h2>Is it non-retina backward compatible?</h2>
-<p>No. For instance, this is how it looks in non-retina Safari: <img class="pixelated" style="vertical-align: middle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAASCAAAAABkh0FCAAAAAnRSTlMA/1uRIrUAAAAYSURBVHgBY7AFgzIMMLASEOo/BhiVwAAAbJUyxICDawoAAAAASUVORK5CYII="> (i.e. border becomes half-transparent and corners have different colors). <a href="http://css-tricks.com/snippets/css/retina-display-media-query/">Media queries</a> to the rescue:</p>
+<h2>Are those non-retina backward compatible?</h2>
+<p>No, none of them are. <a href="http://css-tricks.com/snippets/css/retina-display-media-query/">Media queries</a> to the rescue:</p>
 <pre class="border-scale"><code>.thin-border {
 	border: 1px solid rgba(0, 0, 0, 0.5);
 }
