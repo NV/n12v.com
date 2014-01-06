@@ -94,7 +94,15 @@ border-image.com</a> demonstrates how it’s sliced.</p>
 <p>I tested in Chrome 31, Safari 7, Firefox 26, and iOS 7 &mdash; all worked.</p>
 <h2>Are those non-retina backward compatible?</h2>
 <p>No, none of them are. <a href="http://css-tricks.com/snippets/css/retina-display-media-query/">Media queries</a> to the rescue:</p>
-<pre class="border-scale"><code>.thin-border {
+<style>#{{ ns }} .thin-border {
+	border: 1px solid rgba(0, 0, 0, 0.5);
+}
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+	#{{ ns }} .thin-border {
+		border-image: url(/{{page.id}}/border.gif) 2 repeat;
+	}
+}</style>
+<pre class="thin-border"><code>.thin-border {
 	border: 1px solid rgba(0, 0, 0, 0.5);
 }
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
