@@ -5,6 +5,9 @@ date: 2014-01-05 03:10
 comments: true
 ---
 
+<p>On retina (high <abbr>DPI</abbr>) screens <abbr>CSS</abbr> pixels don’t match device (physical) pixels.
+Here is a few ways to draw 1 device pixel border.</p>
+<!-- more -->
 <h2>Half-pixel border</h2>
 {% assign ns = page.id | article_id %}
 <style>#{{ ns }} pre {
@@ -16,7 +19,6 @@ comments: true
 	<dt>Cons:</dt>
 	<dd>Works only in Firefox</dd>
 </dl>
-<!-- more -->
 <h2>border-image</h2>
 <pre class="retina-border-code" style="border: 1px solid rgba(0, 0, 0, 0.4); -webkit-border-image: url(/{{page.id}}/border.gif) 2 repeat; border-image: url(/{{page.id}}/border.gif) 2 repeat;"><code>border-width: 1px;
 border-image: url(border.gif) 2 repeat;</code></pre>
