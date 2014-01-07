@@ -66,10 +66,12 @@ h4 {
 p, ul, ol, dl, blockquote {
   margin: 0 0 $margin-bottom;
 }
-p, li, blockquote {
+p, li, dl, blockquote {
   max-width: $content-width;
 }
-
+dd {
+	margin-bottom: .25em;
+}
 input, button, select {
 	font-size: 13px; // Larger font-size makes buttons squared in WebKit and Blink on OS X :(
 }
@@ -145,6 +147,11 @@ var {
 samp {
   font-size: inherit;
 }
+
+.list-header {
+	margin-bottom: 0em;
+}
+
 
 #content {
   min-height: 100%;
@@ -429,11 +436,19 @@ $bg-border: #CED3E4;
 //* {color: red}
 //}
 
-//@media (max-width: 700px) {
-//  p, li, pre {
-//    max-width: 500px;
-//  }
-//}
+
+@media (max-width: 1000px) {
+	pre > code {
+		font-size: 12px;
+	}
+}
+@media (max-width: 700px) {
+	pre > code {
+		font-size: 11px;
+	}
+}
+
+
 
 // iDevice
 //@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
