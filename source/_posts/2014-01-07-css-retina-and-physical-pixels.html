@@ -1,13 +1,13 @@
 ---
 layout: post
-title: "CSS, Retina, and border-width of One Physical Pixel"
+title: "CSS, Retina, and Physical Pixels"
 date: 2014-01-05 03:10
 comments: true
 ---
 
-<p>On retina (high <abbr>DPI</abbr>) screens <abbr>CSS</abbr> pixels don’t match device (physical) pixels.
-A device pixel ratio of 2 means 1 <abbr>CSS</abbr> pixel equals two 2 device pixels.
-Here is a few ways to draw 1 device pixel border.</p>
+<p>On retina screens <abbr>CSS</abbr> pixels don’t match device (physical) pixels.
+A device pixel ratio of 2 means one <abbr>CSS</abbr> pixel equals two device pixels.
+Here are few ways to draw a one-device-pixel border.</p>
 <!-- more -->
 <h2>Half-pixel border</h2>
 {% assign ns = page.id | article_id %}
@@ -32,7 +32,7 @@ border-image.com</a> demonstrates how it’s sliced.</p>
 </ul>
 <p class="list-header">Cons:</p>
 <ul>
-	<li>External image. It’s only 51 bytes and it can be inlined using Data URI. You’d need to fire up Photoshop (or whatever you use) to change border color, which isn’t very convenient.</li>
+	<li>An external image. It’s only 51 bytes and it can be inlined using Data URI. You’d need to fire up Photoshop (or whatever you use) to change the border color, which isn’t very convenient.</li>
 </ul>
 
 <p><a href="http://atirip.com/2013/09/22/yes-we-can-do-fraction-of-a-pixel/"></a></p>
@@ -45,7 +45,7 @@ border-image.com</a> demonstrates how it’s sliced.</p>
 	linear-gradient(90deg,  black, black 50%, transparent 50%) top    right / 1px 100% no-repeat,
 	linear-gradient(0,      black, black 50%, transparent 50%) bottom right / 100% 1px no-repeat,
 	linear-gradient(-90deg, black, black 50%, transparent 50%) bottom left  / 1px 100% no-repeat;</code></pre>
-<p>“<a href="https://excellenteasy.com/devblog/posts/how-to-target-physical-pixels-on-retina-screens-with-css/">How to target physical pixels on retina screens with CSS</a>” describes how to draw a line. I repeated it 3 times to draw a rectangle.</p>
+<p>“<a href="https://excellenteasy.com/devblog/posts/how-to-target-physical-pixels-on-retina-screens-with-css/">How to target physical pixels on retina screens with CSS</a>” describes how to draw a line. Draw 4 lines and we have a border.</p>
 <p class="list-header">Pros:</p>
 <ul><li>No external images.</li></ul>
 <p class="list-header">Cons:</p>
@@ -85,10 +85,10 @@ border-image.com</a> demonstrates how it’s sliced.</p>
 	left: 0;
 	top: 0;
 }</code></pre>
-<p>“<a href="http://atirip.com/2013/09/22/yes-we-can-do-fraction-of-a-pixel/">Yes We Can Do Fraction of a Pixel</a>” explains the method in great details.</p>
+<p>“<a href="http://atirip.com/2013/09/22/yes-we-can-do-fraction-of-a-pixel/">Yes We Can Do Fraction of a Pixel</a>” explains the method in great detail.</p>
 <p class="list-header">Pros:</p>
 <ul>
-	<li>Supports <code class="border-scale rounded-corners">rounded-corners</code>, although it looks pretty ugly on retina.</li>
+	<li>Supports <code class="border-scale rounded-corners">rounded-corners</code>, although it looks unpleasant on retina.</li>
 	<li>No external images.</li>
 </ul>
 <p class="list-header">Cons:</p>
