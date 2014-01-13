@@ -381,13 +381,35 @@ $bg-border: #CED3E4;
   margin-left: -$gap;
 }
 
-.comments {
+.appendix {
   @extend .full-width;
   background: $bg;
   border-top: 1px solid $bg-border;
   margin-top: 1.5em;
   padding-top: 1.5em;
   min-height: 365px;
+}
+
+.appendix-table {
+	width: 100%;
+}
+.comments {
+	width: 100%;
+}
+.carbonads-container {
+	width: 150px;
+	padding-left: 2em;
+	padding-left: 3vw;
+
+	& .carbonad {
+		background: $bg;
+		border: 1px solid $bg-border;
+	}
+
+	& .carbonad-tag,
+	& .carbonad-tag a {
+		color: #a5b2b9
+	}
 }
 
 .image-toggle {

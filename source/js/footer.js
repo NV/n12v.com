@@ -215,6 +215,7 @@ function route(link, success) {
 					setViewImmediately(VIEW.PAGE);
 					getScrollableRoot().scrollTop = $('#top').outerHeight() + 1;
 					loadDisqus();
+					loadAds();
 					done();
 				} else {
 					i++;
@@ -227,6 +228,7 @@ function route(link, success) {
 
 if (view === VIEW.PAGE) {
 	loadDisqus();
+	loadAds();
 }
 
 function loadDisqus() {
@@ -261,6 +263,17 @@ function loadDisqus() {
 			dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
 			document.body.appendChild(dsq);
 		}
+	});
+}
+
+
+function loadAds() {
+	requestAnimationFrame(function() {
+		var z = document.createElement('script');
+		z.type = 'text/javascript';
+		z.async = true;
+		z.src = 'http://engine.carbonads.com/z/56637/azcarbon_2_1_0_VERT';
+		document.body.appendChild(z);
 	});
 }
 
