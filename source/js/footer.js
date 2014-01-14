@@ -269,11 +269,19 @@ function loadDisqus() {
 
 function loadAds() {
 	requestAnimationFrame(function() {
-		var z = document.createElement('script');
-		z.type = 'text/javascript';
-		z.async = true;
-		z.src = 'http://engine.carbonads.com/z/56637/azcarbon_2_1_0_VERT';
-		document.body.appendChild(z);
+		$('.carbonads-container').remove();
+
+		$('.article-current .ads').html('<div class="carbonads-container">' +
+			'<div class="carbonad">' +
+				'<div id="azcarbon"/>' +
+			'</div>' +
+		'</div>');
+
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.async = true;
+		script.src = 'http://engine.carbonads.com/z/56637/azcarbon_2_1_0_VERT';
+		document.body.appendChild(script);
 	});
 }
 
