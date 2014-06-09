@@ -242,6 +242,9 @@ function loadDisqus() {
 			disqus_thread.parentNode.removeChild(disqus_thread);
 		}
 		var current = $('.article-current .comments');
+		if (current.length === 0) {
+			return;
+		}
 		current.append('<div id="disqus_thread"/>');
 
 		//window.disqus_identifier = location.pathname;
@@ -470,6 +473,18 @@ function isPlainClick(event) {
 
 	return true;
 }
+
+$('body').on('click', 'video', function(e) {
+	var video = e.target;
+	var classes = ['video-playing', 'video-paused'];
+	if (video.paused) {
+		video.play();
+		classes.reverse();
+	} else {
+		video.pause();
+	}
+	$(video).removeClass(classes[0]).addClass(classes[1]);
+});
 
 
 })();

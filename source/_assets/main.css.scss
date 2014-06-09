@@ -104,6 +104,10 @@ pre {
   margin: 0 0 $margin-bottom;
   white-space: pre-wrap;
   //font-size: 14px; // 'inherit' or 100% doesn't work for <pre>. I hate CSS.
+
+	i {
+		font-style: normal;
+	}
 }
 
 blockquote {
@@ -394,7 +398,7 @@ $bg-border: #CED3E4;
 }
 
 .image-toggle {
-	border: 1px solid $bg;
+	box-shadow: 0 0 1px $bg-border;
 	box-sizing: content-box;
 	transition-property: width, margin-left;
 	transition-duration: .4s;
@@ -402,7 +406,7 @@ $bg-border: #CED3E4;
 }
 .image-toggle:hover,
 .image-toggle:focus {
-	border-color: $bg-border;
+	box-shadow: 0 0 1px $top-text-color;
 }
 .js .image-toggle-min {
 	cursor: zoom-in;
@@ -413,6 +417,22 @@ $bg-border: #CED3E4;
 	cursor: zoom-out;
 	cursor: -webkit-zoom-out;
 	margin-left: -8vw;
+}
+
+video {
+	cursor: pointer;
+}
+video:hover,
+.video-paused {
+	box-shadow: 0 0 1px $top-text-color;
+}
+
+hr {
+	background: none;
+	border-width: 0;
+	border-bottom: 1px solid #DDD;
+	margin: 1.5em 0;
+	max-width: $content-width;
 }
 
 .page-error {
