@@ -199,7 +199,7 @@ even if it’s exactly the same.</p>
 
 <h2 id="react">React.js</h2>
 <div id="tm-react"><p class="temperature-converter"><label class="celsius-wrap"><input type="number" class="celsius" value="0"><span> C° </span></label><span class="arrows"> ⇄ </span><label class="fahrenheit-wrap"><input type="number" class="fahrenheit" value="32"><span> F° </span></label></p></div>
-<script src="http://fb.me/react-0.10.0.min.js"></script>
+<script src="//fb.me/react-0.10.0.min.js"></script>
 <script src="/2-way-data-binding/react-app.js"></script>
 <pre><code>var <i>TemperatureConverter</i> = <i>React.createClass</i>({
 	<i>getInitialState</i>: function() {
@@ -234,6 +234,9 @@ even if it’s exactly the same.</p>
 )</code></pre>
 <p>React.js doesn’t have Backbone’s problem with moving the cursor position. Its virtual DOM,
 a layer between the actual DOM and React’s state, prevents React from unnecessary DOM changes.</p>
+<p><code>setState</code> schedules re-rendering on next <code>requestAnimationFrame</code>.
+	<code>render</code> method updates the virtual DOM, calculates the difference between
+	the current and the previous virtual DOM objects, and applies the changes to the actual DOM.</p>
 <p>However, here is another bug (Backbone has it too):</p>
 <h3>Double Conversion</h3>
 <video preload autoplay loop width="226">
@@ -285,7 +288,7 @@ In many programming languages, including JavaScript, floating point operations <
 	}
 })
 </code></pre>
-<!--<p><a href="http://embed.plnkr.co/QrEhKBVyVhTY4ef1FvOR/preview" rel="nofollow">http://embed.plnkr.co/QrEhKBVyVhTY4ef1FvOR</a></p>-->
+<!-- http://embed.plnkr.co/QrEhKBVyVhTY4ef1FvOR -->
 
 
 <h2 id="meteor">Meteor</h2>
@@ -323,13 +326,13 @@ In many programming languages, including JavaScript, floating point operations <
 
 <h2>Summary</h2>
 <p>Backbone doesn’t support two-way data binding out of the box. It’s the only library here that overwrites the currently edited input field with the same value.</p>
-<p>React’s virtual DOM works well in most cases but needs some massaging when dealing with floating point numbers.</p>
-<p>Angular and Meteor work well out of the box.</p>
+<p>React, Angular and Meteor all support two-way data binding. Although, in my example React needed a little extra logic to handle conversion errors.</p>
 <p>Fortunately, none of the mentioned libraries go into an infinite loop updating values back and forth between model and view.</p>
 <hr>
 <p>Syntax highlighting in the article was inspired by “<a href="https://medium.com/programming-ideas-tutorial-and-experience/coding-in-color-3a6db2743a1e">Coding in color: How to make syntax highlighting more useful</a>”.</p>
-<p>Thanks to <a href="https://twitter.com/surjikal">Nick Porter</a> for helping with Angular and <a href="http://dybskiy.com/">Yuriy Dybskiy</a> for reviewing my Meteor code. <!--, and <a href="http://adamsolove.com/">Adam Solove</a> for copy editing the whole thing--></p>
-
+<p>Thanks to <a href="https://github.com/surjikal">Nick Porter</a> for helping with Angular,
+	<a href="http://dybskiy.com/">Yuriy Dybskiy</a> for reviewing my Meteor code,
+	and <a href="http://adamsolove.com/">Adam Solove</a> for copy editing the whole thing.</p>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js" defer></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js" defer></script>
