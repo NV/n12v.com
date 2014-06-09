@@ -106,7 +106,7 @@ fahrenheit.oninput = function(e) {
 };
 </script>
 
-<p>Vanilla JS is our baseline. Input values are synchronised using two event handlers, one on every input field.</p>
+<p>Vanilla JS is our baseline. Input values are synchronised using two event handlers, one on each input field.</p>
 
 <pre><code>
 function <i>c2f</i>(<i class="celsius">c</i>) {
@@ -177,7 +177,7 @@ var <i>temperatureView</i> = new <i>TemperatureView</i>()
 </code></pre>
 
 <p><code>Temperature</code> is our model. Note that it only stores °C values, it doesn’t store °F.
-We can always convert one two another so there is no need to store both.</p>
+We can always convert one to another so there is no need to store both.</p>
 
 <h3 id="view-model-view">View&rarr;Model&rarr;View Blowback</h3>
 <video preload autoplay loop width="94" height="42">
@@ -185,8 +185,8 @@ We can always convert one two another so there is no need to store both.</p>
 	<source src="/2-way-data-binding/blowback.mp4" type="video/mp4">
 	<source src="/2-way-data-binding/blowback.ogv" type="video/ogg">
 </video>
-<p>Changing value in the text field moves text cursor to the end. The problem is that data flows
-from an input field to a model,	and then back to the same input field, overriding current value
+<p>Changing the value in the text field moves the cursor to the end. The problem is that data flows
+from an input field to a model,	and then back to the same input field, overriding the current value
 even if it’s exactly the same.</p>
 <video preload autoplay loop width="320" height="180">
 	<source src="/2-way-data-binding/boomerang.webm" type="video/webm">
@@ -232,8 +232,8 @@ even if it’s exactly the same.</p>
 	&lt;<i>TemperatureConverter</i>/&gt;,
 	<i>document.body</i>
 )</code></pre>
-<p>React.js doesn’t have Backbone’s problem. It has a notion of virtual DOM,
-which is a layer between actual DOM and React’s state, it prevents React from unnecessary DOM changes.</p>
+<p>React.js doesn’t have Backbone’s problem with moving the cursor position. Its virtual DOM,
+a layer between the actual DOM and React’s state, prevents React from unnecessary DOM changes.</p>
 <p>However, here is another bug (Backbone has it too):</p>
 <h3>Double Conversion</h3>
 <video preload autoplay loop width="226">
@@ -257,7 +257,7 @@ In many programming languages, including JavaScript, floating point operations <
 </p>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.17/angular.min.js"></script>
 <script src="/2-way-data-binding/angular-app.js"></script>
-<p>Angular.js doesn't have the problems mentioned previously since it doesn’t update the initiator input field whatsoever.</p>
+<p>Angular.js doesn't have the problems mentioned previously since it doesn’t update the input field that changed.</p>
 <h3>HTML</h3>
 <pre><code>&lt;<i>div ng-app="temperature-converter"</i>&gt;
 	<i class="celsius">&lt;input type="number" ng-model="c"&gt;°C</i> <i>⇄</i>
@@ -289,7 +289,7 @@ In many programming languages, including JavaScript, floating point operations <
 
 
 <h2 id="meteor">Meteor</h2>
-<p>Meteor, like Angular, doesn’t have mentioned problems either.</p>
+<p>Meteor, like Angular, doesn’t have the mentioned problems either.</p>
 <h3>HTML</h3>
 <pre><code>&lt;<i>body</i>&gt;
 	<i>{&#123;&gt; temperatureConverter}}</i>
@@ -322,10 +322,10 @@ In many programming languages, including JavaScript, floating point operations <
 
 
 <h2>Summary</h2>
-<p>Backbone doesn’t support two-way data binding out of the box, it’s the only library here that overwrites currently edited input field with the same value.</p>
+<p>Backbone doesn’t support two-way data binding out of the box. It’s the only library here that overwrites the currently edited input field with the same value.</p>
 <p>React’s virtual DOM works well in most cases but needs some massaging when dealing with floating point numbers.</p>
 <p>Angular and Meteor work well out of the box.</p>
-<p>Fortunately, none of the mentioned libraries go into infinite loop updating values back and forth between model and view.</p>
+<p>Fortunately, none of the mentioned libraries go into an infinite loop updating values back and forth between model and view.</p>
 <hr>
 <p>Syntax highlighting in the article was inspired by “<a href="https://medium.com/programming-ideas-tutorial-and-experience/coding-in-color-3a6db2743a1e">Coding in color: How to make syntax highlighting more useful</a>”.</p>
 <p>Thanks to <a href="https://twitter.com/surjikal">Nick Porter</a> for helping with Angular and <a href="http://dybskiy.com/">Yuriy Dybskiy</a> for reviewing my Meteor code. <!--, and <a href="http://adamsolove.com/">Adam Solove</a> for copy editing the whole thing--></p>
