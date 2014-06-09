@@ -49,23 +49,37 @@ private: true
 	border-radius: 4px;
 }
 
-.fahrenheit-wrap {}
-.celsius-wrap {}
+.fahrenheit-wrap {border-color: hsl(151, 21%, 77%)}
+.celsius-wrap {border-color: hsl(34, 43%, 72%)}
 
 
-#article_2-way-data-binding i {
-	color: #000
+#article_2-way-data-binding b {
+	color: #000;
+	font-weight: normal;
 }
 #article_2-way-data-binding .celsius-wrap,
-#article_2-way-data-binding i.celsius {
-	color: hsl(31, 100%, 30%);
+#article_2-way-data-binding .c > b,
+#article_2-way-data-binding b.c {
 	background: hsl(46, 52%, 90%);
+	color: hsl(31, 100%, 30%);
 }
+#article_2-way-data-binding i.c {
+	background: hsl(46, 52%, 90%);
+	color: hsl(31, 30%, 53%);
+}
+
+#article_2-way-data-binding .f {background: hsl(151, 24%, 90%)}
 #article_2-way-data-binding .fahrenheit-wrap,
-#article_2-way-data-binding i.fahrenheit {
+#article_2-way-data-binding b.f {
 	color: hsl(151, 60%, 30%);
 	background: hsl(151, 24%, 90%);
 }
+#article_2-way-data-binding i.f {
+	color: hsl(151, 20%, 54%);
+	background: hsl(151, 24%, 90%);
+}
+#article_2-way-data-binding .f > b {color: hsl(151, 60%, 30%)}
+
 #article_2-way-data-binding .hover-highlight {
 	outline: 4px solid yellow;
 }
@@ -109,23 +123,23 @@ fahrenheit.oninput = function(e) {
 <p>Vanilla JS is our baseline. Input values are synchronised using two event handlers, one on each input field.</p>
 
 <pre><code>
-function <i>c2f</i>(<i class="celsius">c</i>) {
-	return <i>9/5 * <i class="celsius">c</i> + 32</i>
+function <b>c2f</b>(<b class="c">c</b>) {
+	return <b>9/5 * <b class="c">c</b> + 32</b>
 }
-function <i>f2c</i>(<i class="fahrenheit">f</i>) {
-	return <i>5/9 * (<i class="fahrenheit">f</i> - 32)</i>
+function <b>f2c</b>(<b class="f">f</b>) {
+	return <b>5/9 * (<b class="f">f</b> - 32)</b>
 }
 
-<i class="celsius">var celsius = document.getElementById('celsius')</i>
-<i class="fahrenheit">var fahrenheit = document.getElementById('fahrenheit')</i>
-<i class="fahrenheit">fahrenheit.value</i> = <i>c2f</i>(<i class="celsius">celsius.value</i>)
+<i class="c">var <b>celsius</b> = <b>document.getElementById</b>(<b>'celsius'</b>)</i>
+<i class="f">var <b>fahrenheit</b> = <b>document.getElementById</b>(<b>'fahrenheit'</b>)</i>
+<b class="f">fahrenheit.value</b> = <b>c2f</b>(<b class="c">celsius.value</b>)
 
-<i class="celsius">celsius.oninput</i> = function(<i class="celsius">e</i>) {
-	<i class="fahrenheit">fahrenheit.value</i> = <i>c2f</i>(<i class="celsius">e.target.value</i>)
+<b class="c">celsius.oninput</b> = function(<b class="c">e</b>) {
+	<b class="f">fahrenheit.value</b> = <b>c2f</b>(<b class="c">e.target.value</b>)
 };
 
-<i class="fahrenheit">fahrenheit.oninput</i> = function(<i class="fahrenheit">e</i>) {
-	<i class="celsius">celsius.value</i> = <i>f2c</i>(<i class="fahrenheit">e.target.value</i>)
+<b class="f">fahrenheit.oninput</b> = function(<b class="f">e</b>) {
+	<b class="c">celsius.value</b> = <b>f2c</b>(<b class="f">e.target.value</b>)
 };
 </code></pre>
 
@@ -138,42 +152,42 @@ function <i>f2c</i>(<i class="fahrenheit">f</i>) {
 </p>
 
 <pre><code>
-var <i>Temperature</i> = <i>Backbone.Model.extend</i>({
-	<i>defaults</i>: {
-		<i class="celsius">celsius: 0</i>
+var <b>Temperature</b> = <b>Backbone.Model.extend</b>({
+	<b>defaults</b>: {
+		<i class="c"><b>celsius</b>: <b>0</b></i>
 	},
-	<i class="fahrenheit">fahrenheit</i>: function(<i class="fahrenheit">value</i>) {
-		if (typeof <i class="fahrenheit">value</i> == 'undefined') {
-			return <i>c2f</i>(<i class="celsius">this.get('celsius')</i>)
+	<b class="f">fahrenheit</b>: function(<b class="f">value</b>) {
+		if (typeof <b class="f">value</b> == 'undefined') {
+			return <b>c2f</b>(<i class="c">this.<b>get</b>(<b>'celsius'</b>)</i>)
 		}
-		<i class="celsius">this.set('celsius', <i>f2c</i>(<i class="fahrenheit">value</i>))</i>
+		<i class="c">this.<b>set</b>(<b>'celsius'</b>, <b>f2c</b>(<b class="f">value</b>))</i>
 	}
 })
 
-var <i>TemperatureView</i> = <i>Backbone</i>.<i>View</i>.<i>extend</i>({
-	<i>el</i>: <i>document</i>.<i>getElementById</i>(<i>'tc-backbone'</i>),
-	<i>model</i>: new <i>Temperature</i>(),
-	<i>events</i>: {
-		<i class="celsius">'input .celsius': 'updateCelsius'</i>,
-		<i class="fahrenheit">'input .fahrenheit': 'updateFahrenheit'</i>
+var <b>TemperatureView</b> = <b>Backbone</b>.<b>View</b>.<b>extend</b>({
+	<b>el</b>: <b>document</b>.<b>getElementById</b>(<b>'tc-backbone'</b>),
+	<b>model</b>: new <b>Temperature</b>(),
+	<b>events</b>: {
+		<i class="c"><b>'input .celsius'</b>: <b>'updateCelsius'</b></i>,
+		<i class="f"><b>'input .fahrenheit'</b>: <b>'updateFahrenheit'</b></i>
 	},
-	<i>initialize</i>: function() {
-		this.<i>listenTo</i>(this.<i>model</i>, <i class="celsius">'change:celsius'</i>, this.<i>render</i>)
-		this.<i>render</i>()
+	<b>initialize</b>: function() {
+		this.<b>listenTo</b>(this.<b>model</b>, <b class="c">'change:celsius'</b>, this.<b>render</b>)
+		this.<b>render</b>()
 	},
-	<i>render</i>: function() {
-		<i class="celsius">this.$('.celsius').val(this.model.get('celsius'))</i>
-		<i class="fahrenheit">this.$('.fahrenheit').val(this.model.fahrenheit())</i>
+	<b>render</b>: function() {
+		<i class="c">this<b>.$</b>(<b>'.celsius'</b>)<b>.val</b>(this<b>.model.get</b>(<b>'celsius'</b>))</i>
+		<i class="f">this<b>.$</b>(<b>'.fahrenheit'</b>)<b>.val</b>(this<b>.model.fahrenheit</b>())</i>
 	},
-<i class="celsius">	updateCelsius: function(event) {
-		this.model.set('celsius', event.target.value)
-	}</i>,
-<i class="fahrenheit">	updateFahrenheit: function(event) {
-		this.model.fahrenheit(event.target.value)
-	}</i>
+	<b>updateCelsius</b>: function(<b>event</b>) {
+		<i class="c">this.<b>model.set</b>(<b>'celsius'</b>, <b>event.target.value</b>)</i>
+	},
+	<b>updateFahrenheit</b>: function(<b>event</b>) {
+		<i class="f">this<b>.model.fahrenheit</b>(<b>event.target.value</b>)</i>
+	}
 })
 
-var <i>temperatureView</i> = new <i>TemperatureView</i>()
+var <b>temperatureView</b> = new <b>TemperatureView</b>()
 </code></pre>
 
 <p><code>Temperature</code> is our model. Note that it only stores °C values, it doesn’t store °F.
@@ -198,39 +212,39 @@ even if it’s exactly the same.</p>
 
 
 <h2 id="react">React.js</h2>
-<div id="tm-react"><p class="temperature-converter"><label class="celsius-wrap"><input type="number" class="celsius" value="0"><span> C° </span></label><span class="arrows"> ⇄ </span><label class="fahrenheit-wrap"><input type="number" class="fahrenheit" value="32"><span> F° </span></label></p></div>
+<div id="tm-react"><p class="temperature-converter"><label class="celsius-wrap"><input type="number" class="celsius" value="0"><span> C° </span></label><span class="arrows"> ⇄ </span><label class="fahrenheit-wrap"><input type="number" class="f" value="32"><span> F° </span></label></p></div>
 <script src="//fb.me/react-0.10.0.min.js"></script>
 <script src="/2-way-data-binding/react-app.js"></script>
-<pre><code>var <i>TemperatureConverter</i> = <i>React.createClass</i>({
-	<i>getInitialState</i>: function() {
-		return {<i class="celsius">c: 0</i>}
+<pre><code>var <b>TemperatureConverter</b> = <b>React.createClass</b>({
+	<b>getInitialState</b>: function() {
+		return <i class="c">{<b>c</b>: <b>0</b>}</i>
 	},
-	<i>render</i>: function() {
-<i class="celsius">		var celciusValueLink = {
-			value: this.state.c.toString(),
-			requestChange: this.onCelsiusChange
-		}</i>
-<i class="fahrenheit">		var fahrenheitValueLink = {
-			value: c2f(<i class="celsius">this.state.c</i>).toString(),
-			requestChange: this.onFahrenheitChange
-		}</i>
-		return &lt;<i>div</i>&gt;
-			<i class="celsius">&lt;input type="number" valueLink={celciusValueLink}/&gt;°C</i>
-			&lt;<i>span</i>&gt; <i>⇄</i> &lt;/<i>span</i>&gt;
-			<i class="fahrenheit">&lt;input type="number" valueLink={fahrenheitValueLink}/&gt;°F</i>
-		&lt;/<i>div</i>&gt;
+	<b>render</b>: function() {
+		var <b>celciusValueLink</b> = {
+			<b>value</b>: <i class="c">this<b>.state.c.toString</b>()</i>,
+			<b>requestChange</b>: this.<b>onCelsiusChange</b>
+		}
+		var <b>fahrenheitValueLink</b> = {
+			<b>value</b>: <i class="f"><b>c2f</b>(<i class="c">this<b>.state.c</b></i>).<b>toString</b>()</i>,
+			<b>requestChange</b>: this.<b>onFahrenheitChange</b>
+		}
+		return &lt;<b>div</b>&gt;
+			<i class="c">&lt;<b>input</b> <b>type</b>="<b>number</b>" <b>valueLink</b>={<b>celciusValueLink</b>}/&gt;<b>°C</b></i>
+			&lt;<b>span</b>&gt; <b>⇄</b> &lt;/<b>span</b>&gt;
+			<i class="f">&lt;<b>input</b> <b>type</b>="<b>number</b>" <b>valueLink</b>={<b>fahrenheitValueLink</b>}/&gt;<b>°F</b></i>
+		&lt;/<b>div</b>&gt;
 	},
-<i class="celsius">	onCelsiusChange: function(data) {
-		this.setState({c: parseFloat(data)})
-	}</i>,
-<i class="fahrenheit">	onFahrenheitChange: function(data) {
-		this.setState({c: f2c(data)})
-	}</i>
+	<b>onCelsiusChange</b>: function(<b class="c">data</b>) {
+		this.<b>setState</b>(<i class="c">{<b>c</b>: <b>parseFloat</b>(<b>data</b>)}</i>)
+	},
+	<b>onFahrenheitChange</b>: function(<b class="f">data</b>) {
+		this.<b>setState</b>(<i class="c">{<b>c</b>: <b>f2c</b>(<b class="f">data</b>)}</i>)
+	}
 })
 
-<i>React.renderComponent</i>(
-	&lt;<i>TemperatureConverter</i>/&gt;,
-	<i>document.body</i>
+<b>React.renderComponent</b>(
+	&lt;<b>TemperatureConverter</b>/&gt;,
+	<b>document.body</b>
 )</code></pre>
 <p>React.js doesn’t have Backbone’s problem with moving the cursor position. Its virtual DOM,
 a layer between the actual DOM and React’s state, prevents React from unnecessary DOM changes.</p>
@@ -245,10 +259,10 @@ a layer between the actual DOM and React’s state, prevents React from unnecess
 	<source src="/2-way-data-binding/floating_point.ogv" type="video/ogg">
 </video>
 <p>Instead of 2 we get 1.9999999999999964, because:</p>
-<pre><code><i class="fahrenheit">c2f(<i class="celsius">f2c(<i class="fahrenheit">2</i>)</i>)</i> === <i class="fahrenheit">1.9999999999999964</i></code></pre>
+<pre><code><b>c2f</b>(<b>f2c</b>(<b class="f">2</b>)) === <b class="f">1.9999999999999964</b></code></pre>
 <p>The problem is in the double conversion: Fahrenheits to Celsius, and then back to Fahrenheits.
 In many programming languages, including JavaScript, floating point operations <a href="https://en.wikipedia.org/wiki/Floating_point#Accuracy_problems">aren’t necessary precise</a>:</p>
-<pre><code><i>0.2 + 0.1 = 0.30000000000000004</i></code></pre>
+<pre><code><b>0.2 + 0.1 = 0.30000000000000004</b></code></pre>
 <p>Ben Alpert, a core developer of React, suggested <a href="http://stackoverflow.com/questions/20796245/react-js-avoid-updates-of-currently-edited-input">two different solutions</a>.</p>
 
 
@@ -262,29 +276,29 @@ In many programming languages, including JavaScript, floating point operations <
 <script src="/2-way-data-binding/angular-app.js"></script>
 <p>Angular.js doesn't have the problems mentioned previously since it doesn’t update the input field that changed.</p>
 <h3>HTML</h3>
-<pre><code>&lt;<i>div ng-app="temperature-converter"</i>&gt;
-	<i class="celsius">&lt;input type="number" ng-model="c"&gt;°C</i> <i>⇄</i>
-	<i class="fahrenheit">&lt;input type="number" ng-model="c" converter="c2f"&gt;°F</i>
-&lt;/<i>div</i>&gt;</code></pre>
+<pre><code>&lt;<b>div ng-app="temperature-converter"</b>&gt;
+	<i class="c">&lt;<b>input</b> <b>type</b>="<b>number</b>" <b>ng-model</b>="<b>c</b>"&gt;<b>°C</b></i> <b>⇄</b>
+	<i class="f">&lt;<b>input</b> <b>type</b>="<b>number</b>" <b>ng-model</b>="<b>c</b>" <b>converter</b>="<b>c2f</b>"&gt;<b>°F</b></i>
+&lt;/<b>div</b>&gt;</code></pre>
 		<h3>JS</h3>
-<pre><code>var <i>app</i> = <i>angular.module</i>(<i>'temperature-converter'</i>, []);
+<pre><code>var <b>app</b> = <b>angular.module</b>(<b>'temperature-converter'</b>, []);
 
-<i>app.directive</i>(<i>'converter'</i>, function(<i>converters</i>) {
+<b>app.directive</b>(<b>'converter'</b>, function(<b>converters</b>) {
 	return {
-		<i>require</i>: <i>'ngModel'</i>,
-		<i>link</i>: function(<i>scope</i>, <i>element</i>, <i>attr</i>, <i>ngModel</i>) {
-			var <i>converter</i> = <i>converters</i>[<i>attr.converter</i>]
-			<i>ngModel.$formatters.unshift</i>(<i class="fahrenheit">converter.formatter</i>)
-			<i>ngModel.$parsers.push</i>(<i class="celsius">converter.parser</i>)
-			<i class="celsius">$scope.c = 0</i>
+		<b>require</b>: <b>'ngModel'</b>,
+		<b>link</b>: function(<b>scope</b>, <b>element</b>, <b>attr</b>, <b>ngModel</b>) {
+			var <b>converter</b> = <b>converters</b>[<b>attr.converter</b>]
+			<b>ngModel.$formatters.unshift</b>(<b class="f">converter.formatter</b>)
+			<b>ngModel.$parsers.push</b>(<b class="c">converter.parser</b>)
+			<i class="c"><b>$scope.c</b> = <b>0</b></i>
 		}
 	}
 })
 
-<i>app.value</i>(<i>'converters'</i>, {
-	<i>c2f</i>: {
-		<i class="fahrenheit">formatter: c2f</i>,
-		<i class="celsius">parser: f2c</i>
+<b>app.value</b>(<b>'converters'</b>, {
+	<b>c2f</b>: {
+		<i class="f"><b>formatter</b>: <b>c2f</b></i>,
+		<i class="c"><b>parser</b>: <b>f2c</b></i>
 	}
 })
 </code></pre>
@@ -294,31 +308,31 @@ In many programming languages, including JavaScript, floating point operations <
 <h2 id="meteor">Meteor</h2>
 <p>Meteor, like Angular, doesn’t have the mentioned problems either.</p>
 <h3>HTML</h3>
-<pre><code>&lt;<i>body</i>&gt;
-	<i>{&#123;&gt; temperatureConverter}}</i>
-&lt;/<i>body</i>&gt;
+<pre><code>&lt;<b>body</b>&gt;
+	{&#123;&gt; <b>temperatureConverter</b>}}
+&lt;/<b>body</b>&gt;
 
-&lt;<i>template name="temperatureConverter"</i>&gt;
-	<i class="celsius">&lt;input type="number" value="{{celsius}}" class="celsius"&gt;°C</i> ⇄
-	<i class="fahrenheit">&lt;input type="number" value="{{fahrenheit}}" class="fahrenheit"&gt;°F</i>
-&lt;/<i>template</i>&gt;</code></pre>
+&lt;<b>template</b> <b>name</b>="<b>temperatureConverter</b>"&gt;
+	<i class="c">&lt;<b>input</b> <b>type</b>="<b>number</b>" <b>value</b>="{&#123;<b>celsius</b>}}" <b>class</b>="<b>celsius</b>"&gt;<b>°C</b></i> <b>⇄</b>
+	<i class="f">&lt;<b>input</b> <b>type</b>="<b>number</b>" <b>value</b>="{&#123;<b>fahrenheit</b>}}" <b>class</b>="<b>fahrenheit</b>"&gt;<b>°F</b></i>
+&lt;/<b>template</b>&gt;</code></pre>
 		<h3>JS</h3>
-<pre><code><i class="celsius">Session.setDefault('c', 0)</i>
+<pre><code><i class="c"><b>Session.setDefault</b>(<b>'c'</b>, <b>0</b>)</i>
 
-<i class="celsius">Template.temperatureConverter.celsius = function() {
-	return Session.get('c')
-};</i>
-<i class="fahrenheit">Template.temperatureConverter.fahrenheit = function() {
-	return c2f(<i class="celsius">Session.get('c')</i>)
-};</i>
+<b>Template.temperatureConverter.celsius</b> = function() {
+	return <i class="c"><b>Session.get</b>(<b>'c'</b>)</i>
+};
+<b>Template.temperatureConverter.fahrenheit</b> = function() {
+	return <i class="f"><b>c2f</b>(<b>Session.get</b>(<b>'c'</b>))</i>
+};
 
-<i>Template.temperatureConverter.events</i>({
-<i class="celsius">	'input .celsius': function(e) {
-		Session.set('c', parseFloat(e.target.value))
-	}</i>,
-<i class="fahrenheit">	'input .fahrenheit': function(e) {
-		<i class="celsius">Session.set('c', f2c(<i class="fahrenheit">e.target.value</i>))</i>
-	}</i>
+<b>Template.temperatureConverter.events</b>({
+	<b>'input .celsius'</b>: function(<b class="c">e</b>) {
+		<b>Session.set</b>(<b>'c'</b>, <b>parseFloat</b>(<b class="c">e.target.value</b>))
+	},
+	<b>'input .fahrenheit'</b>: function(<b class="f">e</b>) {
+		<b>Session.set</b>(<b>'c'</b>, <b>f2c</b>(<b class="f">e.target.value</b>))</b>
+	}
 })
 </code></pre>
 <p>Demo: <a href="http://temperature.meteor.com/" rel="nofollow">temperature.meteor.com</a>.</p>
