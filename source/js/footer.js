@@ -135,6 +135,12 @@ function getScrollableRoot() {
  * @param {Function} success
  */
 function route(link, success) {
+
+	if ($(link).hasClass('entry-force-reload')) {
+		location.assign(link.href);
+		return;
+	}
+
 	function fail() {
 		clearTimeout(failTimeout);
 		location.assign(link.href);

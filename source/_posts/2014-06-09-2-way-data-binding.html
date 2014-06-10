@@ -3,6 +3,7 @@ layout: post
 title: "Two-Way Data Binding"
 date: 2014-06-09 14:00
 comments: true
+force_reload: true
 ---
 
 <p>Let’s build a temperature converter app in Backbone, React, Angular, Meteor and vanilla JavaScript.</p>
@@ -210,7 +211,7 @@ even if it’s exactly the same.</p>
 
 
 <h2 id="react">React.js</h2>
-<div id="tm-react"><p class="temperature-converter"><label class="celsius-wrap"><input type="number" class="celsius" value="0"><span> C° </span></label><span class="arrows"> ⇄ </span><label class="fahrenheit-wrap"><input type="number" class="f" value="32"><span> F° </span></label></p></div>
+<div id="tm-react"><p class="temperature-converter"><label class="celsius-wrap"><input type="number" class="celsius" value="0"><span> C° </span></label><span class="arrows"> ⇄ </span><label class="fahrenheit-wrap"><input type="number" class="fahrenheit" value="32"><span> F° </span></label></p></div>
 <script src="//fb.me/react-0.10.0.min.js"></script>
 <script src="/2-way-data-binding/react-app.js"></script>
 <pre><code>var <b>TemperatureConverter</b> = <b>React.createClass</b>({
@@ -329,7 +330,7 @@ In many programming languages, including JavaScript, floating point operations <
 		<b>Session.set</b>(<b>'c'</b>, <b>parseFloat</b>(<b class="c">e.target.value</b>))
 	},
 	<b>'input .fahrenheit'</b>: function(<b class="f">e</b>) {
-		<b>Session.set</b>(<b>'c'</b>, <b>f2c</b>(<b class="f">e.target.value</b>))</b>
+		<b>Session.set</b>(<b>'c'</b>, <b>f2c</b>(<b class="f">e.target.value</b>))
 	}
 })
 </code></pre>
