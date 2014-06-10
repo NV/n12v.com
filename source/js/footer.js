@@ -57,13 +57,19 @@ $('body').on('click', '#title, .entry-link', function(e) {
 	if (isPlainClick(e)) {
 		e.preventDefault();
 		var link = this;
+
 		route(link, function() {
 			pushState(link);
+			setTitle(link);
 			onLocationChange();
 		});
 	}
 });
 
+
+function setTitle(link) {
+	document.title = cache[link.href];
+}
 
 function stripHash(link) {
 	var str = link.toString();
@@ -321,11 +327,11 @@ cache[location.href] = document.title;
 /**
  * @param {string} url
  * @param {function} success
+ * @param {function} fail
  */
 function fetch(url, success, fail) {
 	function fetched(elements) {
 		//setTimeout(function() {
-			document.title = cache[url];
 			success(elements);
 		//}, 200);
 	}
