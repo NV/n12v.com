@@ -270,7 +270,8 @@ a layer between the actual DOM and React’s state, prevents React from unnecess
 <p>Instead of 2 we get 1.9999999999999964, because:</p>
 <pre><code><b>c2f</b>(<b>f2c</b>(<b class="f">2</b>)) === <b class="f">1.9999999999999964</b></code></pre>
 <p>The problem is in the double conversion: Fahrenheits to Celsius, and then back to Fahrenheits.
-In many programming languages, including JavaScript, floating point operations <a href="https://en.wikipedia.org/wiki/Floating_point#Accuracy_problems">aren’t necessary precise</a>:</p>
+In many programming languages, including JavaScript, all arithmetic operations are performed in floating point,
+and floating point operations <a href="https://en.wikipedia.org/wiki/Floating_point#Accuracy_problems">aren't necessarily precise</a>.</p>
 <pre><code><b>0.2 + 0.1 = 0.30000000000000004</b></code></pre>
 <p>Ben Alpert, a core developer of React, suggested <a href="http://stackoverflow.com/questions/20796245/react-js-avoid-updates-of-currently-edited-input">two different solutions</a>.</p>
 
@@ -369,6 +370,8 @@ In many programming languages, including JavaScript, floating point operations <
 <p>Fortunately, none of the mentioned libraries go into an infinite loop updating values back and forth between model and view.</p>
 <hr>
 <ul>
+	<li><a rel="nofollow" href="http://jsfiddle.net/8972C/">Ember.js</a> by <a rel="nofollow" href="#comment-1433706322">Arthur Gunn</a></li>
+	<li><a rel="nofollow" href="http://jsbin.com/gugokajo/edit">Polymer.js</a> by <a rel="nofollow" href="#comment-1434027314">CletusW</a></li>
 	<li><a rel="nofollow" href="http://jsfiddle.net/rich_harris/sLsnn/">Ractive.js example</a> by Rich Harris</li>
 	<li><a rel="nofollow" href="http://jsfiddle.net/DX2Pk/">Vue.js example</a> by Pierre Bertet</li>
 </ul>
