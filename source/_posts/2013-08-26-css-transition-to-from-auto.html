@@ -229,7 +229,7 @@ element.transition({width: '300px'}, 500, 'in-out')</code></pre>
 	width: 140px;
 }
 </style>
-<div class="bar-wrap"><div class="snake article_css-transition-to-from-auto_bar" id="to-from-max-width" style="max-width:4000px">
+<div class="bar-wrap" id="to-from-max-width_wrap"><div class="snake article_css-transition-to-from-auto_bar" id="to-from-max-width" style="max-width:4000px">
 	<label class="radio">
 		<input type="radio" name="max-width_toggler" onchange="maxWidth_toFixed()" value="fixed" class="radio-input">
 		<span class="radio-label l-dark" style="position: absolute; left: 5px; top: 7px">max-width: 160px</span>
@@ -247,8 +247,8 @@ element.transition({width: '300px'}, 500, 'in-out')</code></pre>
 <p>Here goes the problem:</p>
 <p>The width of the orange box in your browser is currently <var class="{{ ns }}_width">X</var>px.<br/>
 Transition from 160px to 4000px takes 1 second.<br>
-Transition from 160px to <var class="{{ ns }}_width">X</var>px takes <var class="{{ ns }}_width">(X-160)/4000</var> second; animation looks <var class="{{ ns }}_width">4000/(X-160)</var>&times; faster.<br>
-Transition from <var class="{{ ns }}_width">X</var>px to 160px looks delayed for <var class="{{ ns }}_width">1-((X-160)/4000)</var>; that’s the time to go from 4000px to <var class="{{ ns }}_width">X</var>px which has no visible effect whatsoever.</p>
+Transition from 160px to <var class="{{ ns }}_width">X</var>px takes <var class="{{ ns }}_width">(X-160)/4000</var> second; animation is <var class="{{ ns }}_width">4000/(X-160)</var>&times; faster than expected.<br>
+Transition from <var class="{{ ns }}_width">X</var>px to 160px is delayed for <var class="{{ ns }}_width">1-((X-160)/4000)</var> second; that’s the time to go from 4000px to <var class="{{ ns }}_width">X</var>px which has no visible effect whatsoever.</p>
 <p>Resize you browser window, see how values change. Narrower the window, more screwed up the animation.</p>
 <script>
 (function() {
@@ -264,7 +264,7 @@ Transition from <var class="{{ ns }}_width">X</var>px to 160px looks delayed for
 		return Math.round(x * 100) / 100;
 	}
 	function updateWidth() {
-		var el = document.getElementById('to-from-max-width');
+		var el = document.getElementById('to-from-max-width_wrap');
 		var width = el.offsetWidth;
 		var w = document.querySelectorAll('.{{ ns }}_width');
 		for (var i = 0; i < w.length; i++) {
