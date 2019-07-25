@@ -15,4 +15,4 @@ Run:
 
 ## Deploy on Amazon S3 and Cloudfront
 
-    n12v.com ➤ rake
+    n12v.com ➤ ./tolya_deployer

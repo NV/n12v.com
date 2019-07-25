@@ -1,0 +1,286 @@
+#!/usr/bin/env ruby
+
+## Usage:
+##   tolya_deployer production_config
+##   tolya_deployer jekyll
+##   tolya_deployer gzip
+##   tolya_deployer upload_file public/main.css
+
+PUBLIC = 'public'         # Jekyll build dir. Duplicated in _config.yml.
+BUILD = 'build'           # Un-gzipped source
+BUILD_GZIP = 'build_gzip' # Gzipped files, ready to upload
+
+HOST = 'n12v.com'
+CONFIG = '_production.yml'
+
+# Files to gzip
+EXTENSIONS = %w{
+  html
+  css
+  js
+  xml
+  svg
+  atom
+  txt
+  plist
+  ico
+}
+
+
+require 'ansi/code'
+def system_run(param)
+  puts(ANSI.blue{param})
+  system(param)
+end
+
+
+def info(text)
+  puts(ANSI.yellow{text})
+end
+
+def warn(text)
+  puts(ANSI.red{text})
+end
+
+
+# http://stackoverflow.com/a/9381776/16185
+def deep_merge(first, second)
+  merger = proc { |key, v1, v2|
+    Hash === v1 && Hash === v2 ? v1.merge(v2, &merger) : v2
+  }
+  first.merge(second, &merger)
+end
+
+
+def is_newer(file_a, file_b)
+  time_a = File.mtime file_a
+  time_b = File.mtime file_b
+  result = time_a > time_b
+  info "is_newer -> #{result}\n  #{time_a} #{file_a}\n  #{time_b} #{file_b}"
+  return time_a > time_b
+end
+
+
+def all_files_in(directory)
+  file_paths = []
+  require 'find'
+  Dir.chdir(directory) do
+    Find.find('.') {|path|
+      path.sub!(/^\.\//, '')
+      if FileTest.directory?(path)
+        first_char = File.basename(path)[0]
+        if first_char == '_' #or first_char == '.'
+          Find.prune # Don't look any further into this directory.
+        else
+          next
+        end
+      else
+        file_paths.push(path)
+      end
+    }
+  end
+  file_paths
+end
+
+
+def fix_modified_time(source_dir, target_dir)
+    info("Update 'modified' attributes for all files in #{target_dir}")
+    #TODO: Fix modified time of generated files.
+    #      public/main.css should have modified time of source/main.css.
+    #      Currently, it has modified time of the last build.
+
+    file_paths = all_files_in(target_dir)
+
+    # This can't properly distinguish directories from files.
+    #files = Dir.glob("#{target_dir}/**/*\.*")
+    #info file_paths.join("\n")
+
+    file_paths.each{|path|
+      source_file = File.join(source_dir, path)
+      if File.exist?(source_file)
+        target_file = File.join(target_dir, path)
+        time_source = File.mtime source_file
+        time_public = File.mtime target_file
+        if time_source.to_i == time_public.to_i
+          info "Time is the same. Nothing to do."
+          info "  #{time_source} #{source_file}\n  #{time_public} #{target_file}"
+          next
+        end
+
+        if time_source.to_i > time_public.to_i
+          info "#{source_file} is newer than #{target_file}. Forgot to build Jekyll?"
+          info "  #{time_source} #{source_file}\n  #{time_public} #{target_file}"
+          next
+        end
+
+        # Fix modified time
+        info "#{target_file} date updated:\n  #{time_public}\n  #{time_source}"
+        File.utime(time_source, time_source, target_file)
+      end
+    }
+end
+
+
+def modified_time_copy(source, destination)
+  time_source = File.mtime source
+  time_destination = File.mtime destination
+
+  if time_source.to_i == time_destination.to_i
+    info "Time is the same. Nothing to do."
+    info "  #{time_source} #{source}\n  #{time_destination} #{destination}"
+    return
+  end
+
+  info "#{destination} - timestamp is about to be transfered:"
+  info "  from #{time_source} #{source}"
+  info "    to #{time_destination} #{destination}"
+  File.utime(time_source, time_source, destination)
+end
+
+
+def gzip_and_replace(path)
+  public_file = File.join(PUBLIC, path)
+  build_file = File.join(BUILD_GZIP, path)
+  system_run("zopfli --i30 -v -c #{public_file} > #{build_file}")
+
+  size_orig = File.size(public_file)
+  size_gzip = File.size(build_file)
+  if size_gzip < size_orig * 0.95 # Only Gzip when the benefit is >5%
+    return true
+  else
+    FileUtils.cp(public_file, build_file)
+    return false
+  end
+end
+
+
+module Tolya
+  def Tolya.production_config
+    info "Merge _config.yml and production.yml into #{CONFIG}"
+
+    require 'yaml'
+    config = YAML.load_file('_config.yml')
+    production = YAML.load_file('production.yml')
+    yaml = deep_merge(config, production).to_yaml
+    File.open(CONFIG, 'w') {|f|
+      f.write(yaml)
+    }
+
+    system_run("jekyll doctor --config #{CONFIG}")
+  end
+
+
+  def Tolya.jekyll
+    info("Build Jekyll from source/ to #{PUBLIC}/")
+    system_run("rm #{PUBLIC}/min.js")
+    system_run("jekyll build --config #{CONFIG}")
+    system_run('rm _asset_bundler_cache') # Asset bundler’s cache acts strange
+
+    fix_modified_time('source', PUBLIC)
+  end
+
+
+  def Tolya.gzip
+    # Only gzip newly added files and files with newer timestamp
+    public_files = all_files_in(PUBLIC)
+    gzip_files = all_files_in(BUILD_GZIP)
+
+    #TODO: This doesn't remove directories
+    gzip_files.each{|path|
+      if not public_files.include?(path)
+        gzip_file = File.join(BUILD_GZIP, path)
+        puts(ANSI.red{"Remove #{gzip_file}"})
+        #FIXME: Actually remove files.
+      end
+    }
+
+    modified_files = []
+    new_files = []
+
+    public_files.each{|path|
+      if gzip_files.include?(path)
+        public_file = File.join(PUBLIC, path)
+        gzip_file = File.join(BUILD_GZIP, path)
+        time_public = File.mtime public_file
+        time_gzip = File.mtime gzip_file
+        if time_gzip.to_i > time_public.to_i
+          warn "#{gzip_file} is newer than #{public_file}. How come?"
+          warn "  #{time_public} #{public_file}\n  #{time_gzip} #{gzip_file}"
+        elsif time_public.to_i > time_gzip.to_i
+          puts ANSI.green{"#{gzip_file} should be updated"}
+          puts ANSI.green{"  #{time_public} #{public_file}\n  #{time_gzip} #{gzip_file}"}
+          modified_files.push(path)
+        else
+          puts "#{path} not modified"
+        end
+      else
+        new_files.push(path)
+      end
+    }
+
+
+    updated = modified_files + new_files
+    zipped = []
+    updated.each{|path|
+      didZip = gzip_and_replace(path)
+      zipped.push(path) if didZip
+    }
+
+    zipped.each{|path|
+      public_file = File.join(PUBLIC, path)
+      build_file = File.join(BUILD_GZIP, path)
+      modified_time_copy(public_file, build_file)
+    }
+
+    unless zipped.empty?
+      puts "Zipped:"
+      puts zipped
+    end
+  end
+
+
+  def Tolya.upload_file(path)
+    public_prefix = PUBLIC + '/'
+    if !path.start_with?(public_prefix)
+      puts "Path must starts with #{public_prefix}"
+      exit
+    end
+
+    build_path = path.sub(public_prefix, BUILD + '/')
+
+    is_newer(path, build_path)
+  end
+end
+
+
+
+def print_help
+  $stderr.puts File.read(__FILE__).lines.grep(/^##[^!]/) {|line|
+    line.sub /^## /, ''
+  }.join
+  exit 1
+end
+
+
+
+if $stdin.tty? and ARGV.empty? or ARGV.delete'-h' or ARGV.delete'--help'
+  print_help
+else
+  case ARGV.first
+  when "upload_file"
+    if ARGV[1].empty?
+      print_help
+    else
+      Tolya.upload_file ARGV[1]
+    end
+  when "production_config"
+    Tolya.production_config
+  when "jekyll"
+    Tolya.jekyll
+  when "gzip"
+    Tolya.gzip
+  else
+    puts "Unknown arg '#{ARGV.first}'\n\n"    
+    print_help
+  end
+end
