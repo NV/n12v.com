@@ -1,10 +1,16 @@
 #!/usr/bin/env ruby
 
 ## Usage:
+##   tolya_deployer all
 ##   tolya_deployer production_config
 ##   tolya_deployer jekyll
-##   tolya_deployer gzip
-##   tolya_deployer upload_file public/main.css
+##   tolya_deployer gzip_and_upload
+##
+## Dependencies:
+##   gem install jekyll ansi
+##   brew install s3cmd
+
+
 
 PUBLIC = 'public'         # Jekyll build dir. Duplicated in _config.yml.
 BUILD = 'build'           # Un-gzipped source
@@ -26,8 +32,9 @@ EXTENSIONS = %w{
   ico
 }
 
-
+require 'fileutils'
 require 'ansi/code'
+
 def system_run(param)
   puts(ANSI.blue{param})
   system(param)
@@ -37,6 +44,7 @@ end
 def info(text)
   puts(ANSI.yellow{text})
 end
+
 
 def warn(text)
   puts(ANSI.red{text})
@@ -83,17 +91,13 @@ def all_files_in(directory)
 end
 
 
-def fix_modified_time(source_dir, target_dir)
+def fix_modified_time(source_dir, target_dir, verbose: false)
+    # Fix modified time of generated files.
+    # public/main.css should have modified time of source/main.css.
+    # Currently, it has modified time of the last build.
     info("Update 'modified' attributes for all files in #{target_dir}")
-    #TODO: Fix modified time of generated files.
-    #      public/main.css should have modified time of source/main.css.
-    #      Currently, it has modified time of the last build.
 
     file_paths = all_files_in(target_dir)
-
-    # This can't properly distinguish directories from files.
-    #files = Dir.glob("#{target_dir}/**/*\.*")
-    #info file_paths.join("\n")
 
     file_paths.each{|path|
       source_file = File.join(source_dir, path)
@@ -102,8 +106,8 @@ def fix_modified_time(source_dir, target_dir)
         time_source = File.mtime source_file
         time_public = File.mtime target_file
         if time_source.to_i == time_public.to_i
-          info "Time is the same. Nothing to do."
-          info "  #{time_source} #{source_file}\n  #{time_public} #{target_file}"
+          verbose and info "Time is the same. Nothing to do."
+          verbose and info "  #{time_source} #{source_file}\n  #{time_public} #{target_file}"
           next
         end
 
@@ -114,7 +118,7 @@ def fix_modified_time(source_dir, target_dir)
         end
 
         # Fix modified time
-        info "#{target_file} date updated:\n  #{time_public}\n  #{time_source}"
+        verbose and info "#{target_file} date updated:\n  #{time_public}\n  #{time_source}"
         File.utime(time_source, time_source, target_file)
       end
     }
@@ -138,7 +142,7 @@ def modified_time_copy(source, destination)
 end
 
 
-def gzip_and_replace(path)
+def gzip_and_replace_one(path)
   public_file = File.join(PUBLIC, path)
   build_file = File.join(BUILD_GZIP, path)
   system_run("zopfli --i30 -v -c #{public_file} > #{build_file}")
@@ -151,6 +155,46 @@ def gzip_and_replace(path)
     FileUtils.cp(public_file, build_file)
     return false
   end
+end
+
+
+def gzip_and_replace(updated_files)
+  not_zipped = []
+
+  updated_files.each{|path|
+    didZip = gzip_and_replace_one(path)
+    if didZip
+      public_file = File.join(PUBLIC, path)
+      build_file = File.join(BUILD_GZIP, path)
+      modified_time_copy(public_file, build_file)
+    else
+      not_zipped << path
+    end
+  }
+
+  info("Not zipped #{not_zipped.join(', ')}.") unless not_zipped.empty?
+  return not_zipped
+end
+
+
+def remove_stale_gzip_files(stale_files)
+  stale_gzip_files = []
+  stale_files.each{|path|
+    build_file = File.join(BUILD_GZIP, path)
+    if FileTest.exist?(build_file)
+      stale_gzip_files << build_file
+    end
+  }
+
+  if stale_gzip_files.empty?
+    info "No stale gzip files found."
+    return
+  end
+
+  puts "About to remove these files:\n  #{stale_gzip_files.join('  ')}"
+  ask_continue
+
+  FileUtils.rm(stale_gzip_files)
 end
 
 
@@ -174,12 +218,13 @@ module Tolya
     info("Build Jekyll from source/ to #{PUBLIC}/")
     system_run("rm #{PUBLIC}/min.js")
     system_run("jekyll build --config #{CONFIG}")
-    system_run('rm _asset_bundler_cache') # Asset bundler’s cache acts strange
+    system_run('rm -rf _asset_bundler_cache') # Asset bundler’s cache acts strange
 
     fix_modified_time('source', PUBLIC)
   end
 
 
+  # Deprecated. Use Tolya.gzip_and_upload instead.
   def Tolya.gzip
     # Only gzip newly added files and files with newer timestamp
     public_files = all_files_in(PUBLIC)
@@ -218,19 +263,7 @@ module Tolya
       end
     }
 
-
-    updated = modified_files + new_files
-    zipped = []
-    updated.each{|path|
-      didZip = gzip_and_replace(path)
-      zipped.push(path) if didZip
-    }
-
-    zipped.each{|path|
-      public_file = File.join(PUBLIC, path)
-      build_file = File.join(BUILD_GZIP, path)
-      modified_time_copy(public_file, build_file)
-    }
+    gzip_and_replace(modified_files + new_files)
 
     unless zipped.empty?
       puts "Zipped:"
@@ -238,25 +271,110 @@ module Tolya
     end
   end
 
-
+  # FIXME
   def Tolya.upload_file(path)
     public_prefix = PUBLIC + '/'
     if !path.start_with?(public_prefix)
-      puts "Path must starts with #{public_prefix}"
-      exit
+      $stderr.puts "Path must starts with #{public_prefix}"
+      exit 1
     end
 
     build_path = path.sub(public_prefix, BUILD + '/')
 
     is_newer(path, build_path)
   end
+
+  def Tolya.gzip_and_upload
+    deleted = []
+    added = []
+    modified = []
+    Dir.chdir('public') do
+      git_porcelain = `git status -z --porcelain=v1`
+      git_porcelain.split(/\0/).each{|item|
+        path = item[3..-1]
+        if item[0] == "?" || item[0] == "A"
+          added << path
+        elsif item[0] == "M" || item[1] == "M"
+          modified << path
+        elsif item[0] == "D" || item[1] == "D"
+          deleted << path
+        else
+          info("Unknown git status item: #{item}")
+        end
+      }
+      system_run 'git diff --compact-summary'
+    end
+
+    if deleted.empty? and added.empty? and modified.empty?
+      puts "Nothing changed. Exiting."
+      exit 0
+    end
+
+    new_files = added + modified
+    puts "About to gzip"
+    ask_continue
+    unzipped = gzip_and_replace(new_files)
+
+    puts "Upload new files to s3://#{HOST}?"
+    ask_continue do
+      new_files.each{|path|
+        local_path  = File.join(BUILD_GZIP, path)
+        remote_path = File.join(HOST, path)
+
+        header = "--add-header='Content-Encoding: gzip'"
+        if unzipped.include? path
+          header = ""
+        end
+
+        system_run("s3cmd put #{header} --acl-public --cf-invalidate --no-preserve #{local_path} s3://#{remote_path}")
+        # --dry-run
+      }
+    end
+
+    unless deleted.empty?
+      remove_stale_gzip_files(deleted)
+      #TODO: Remove stale files.
+      #
+      # `s3cmd sync` is dangerous when the S3 out of date with the local build.
+      # system_run("s3cmd sync --dry-run --verbose --cf-invalidate --acl-public --no-preserve --delete-removed ./#{BUILD_GZIP}/ s3://#{HOST}/")
+      #
+      # Delete file from bucket
+      # s3cmd del s3://BUCKET/OBJECT
+    end
+
+    Dir.chdir('public') do
+      commit_count = `git rev-list --count HEAD`
+      commit_message = "r#{commit_count.to_i + 1}"
+      puts "About to commit #{commit_message}"
+      ask_continue
+
+      system_run 'git add .'
+      system_run "git commit -m #{commit_message}"
+
+      system_run 'git push backup --force'
+    end
+  end
+
 end
 
 
 
+def ask_continue(&block)
+  printf "Continue? Y/n: "
+  prompt = STDIN.gets.chomp().downcase
+  if !prompt.empty? && prompt != 'y' && prompt != 'yes'
+    if !block
+      exit 0
+    end
+  else
+    block.call if block
+  end
+end
+
+
 def print_help
   $stderr.puts File.read(__FILE__).lines.grep(/^##[^!]/) {|line|
-    line.sub /^## /, ''
+    line.sub /^## ?/, ''
   }.join
   exit 1
 end
@@ -267,20 +385,24 @@ if $stdin.tty? and ARGV.empty? or ARGV.delete'-h' or ARGV.delete'--help'
   print_help
 else
   case ARGV.first
+  when "all"
+    Tolya.production_config
+    Tolya.jekyll
+    Tolya.gzip_and_upload
+  when "production_config"
+    Tolya.production_config
+  when "jekyll"
+    Tolya.jekyll
+  when "gzip_and_upload"
+    Tolya.gzip_and_upload
   when "upload_file"
     if ARGV[1].empty?
       print_help
     else
       Tolya.upload_file ARGV[1]
     end
-  when "production_config"
-    Tolya.production_config
-  when "jekyll"
-    Tolya.jekyll
-  when "gzip"
-    Tolya.gzip
   else
-    puts "Unknown arg '#{ARGV.first}'\n\n"    
+    $stderr.puts "Unknown arg '#{ARGV.first}'\n\n"
     print_help
   end
 end
