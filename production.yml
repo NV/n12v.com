@@ -2,7 +2,3 @@ dev: false
 
 asset_bundler:
   dev: false
-
-asset_pipeline:
-  bundle: true
-  compress: true

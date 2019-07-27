@@ -10,7 +10,10 @@ source: source
 destination: public
 plugins: plugins
 
+# Jekyll v1
 pygments: false
+# Jelyll v3
+# highlighter: null
 
 excerpt_separator: '<!-- more -->'
 
@@ -19,7 +22,7 @@ dev: true
 # Used only for JS
 asset_bundler:
   compress:
-    js: java -jar ~/closure/latest.jar --js :infile --js_output_file :outfile
+    js: ./vendor/closure-compiler --js :infile --js_output_file :outfile
     #  --compilation_level ADVANCED_OPTIMIZATIONS
     css: false
   markup_templates:
@@ -30,11 +33,3 @@ asset_bundler:
   remove_bundled: true
   dev: true
   bundle_name: 'min'
-
-# Used only for SCSS/Compass
-asset_pipeline:
-  bundle: false            # Default = true
-  compress: false          # Default = true
-  output_path: css     # Default = assets
-  gzip: false
-#  display_path: nil
