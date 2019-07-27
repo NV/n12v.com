@@ -8,7 +8,6 @@
 ##
 ## Dependencies:
 ##   gem install jekyll ansi
-##   brew install s3cmd
 
 
 
@@ -317,29 +316,17 @@ module Tolya
 
     puts "Upload new files to s3://#{HOST}?"
     ask_continue do
+      # --cf-invalidate doesn't work in S3cmd v2.0.2 https://github.com/s3tools/s3cmd/issues/1046
+      delete_removed_flag = deleted.empty? ? "" : "--delete-removed"
+      system_run("./vendor/s3cmd/s3cmd sync --verbose --no-mime-magic --cf-invalidate --acl-public --no-preserve #{delete_removed_flag} ./#{BUILD_GZIP}/ s3://#{HOST}/")
+      # --dry-run
+
       new_files.each{|path|
-        local_path  = File.join(BUILD_GZIP, path)
+        next if unzipped.include? path
         remote_path = File.join(HOST, path)
-
-        header = "--add-header='Content-Encoding: gzip'"
-        if unzipped.include? path
-          header = ""
-        end
-
-        system_run("s3cmd put #{header} --acl-public --cf-invalidate --no-preserve #{local_path} s3://#{remote_path}")
+        system_run("./vendor/s3cmd/s3cmd modify --add-header='Content-Encoding: gzip' --verbose --acl-public --no-mime-magic --no-preserve s3://#{remote_path}")
         # --dry-run
       }
-    end
-
-    unless deleted.empty?
-      remove_stale_gzip_files(deleted)
-      #TODO: Remove stale files.
-      #
-      # `s3cmd sync` is dangerous when the S3 out of date with the local build.
-      # system_run("s3cmd sync --dry-run --verbose --cf-invalidate --acl-public --no-preserve --delete-removed ./#{BUILD_GZIP}/ s3://#{HOST}/")
-      #
-      # Delete file from bucket
-      # s3cmd del s3://BUCKET/OBJECT
     end
 
     Dir.chdir('public') do
