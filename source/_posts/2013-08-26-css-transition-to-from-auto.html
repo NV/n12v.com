@@ -9,7 +9,8 @@ comments: true
 <style>
 .bar-wrap {
 	position: relative;
-	margin: .75em 0;
+	margin-top: .75em;
+	margin-bottom: .75em;
 	font-family: "Helvetica Neue", Helvetica, sans-serif;
 	font-size: 13px;
 	background: hsl(36, 100%, 83%);
@@ -39,7 +40,7 @@ comments: true
 	background: yellow;
 }
 .{{ ns }}_fixed {
-	width: 300px;
+	width: 200px;
 }
 .{{ ns }}_auto {
 	width: auto;
@@ -74,17 +75,17 @@ comments: true
 }
 </style>
 <p>None of the browsers handle CSS transition from/to auto values correctly.</p>
-<div id="{{ ns }}_toggler" class="bar-wrap" style="position:relative">
+<div id="{{ ns }}_toggler" class="bar-wrap wide-media" style="position:relative">
 	<label class="radio">
 		<input type="radio" name="width_toggler" value="fixed" id="width_toggler_fixed" class="radio-input" checked>
-		<span class="radio-label l-dark" style="left: 199px;">width: 300px</span>
+		<span class="radio-label l-dark" style="left: 95px;">width: 200px</span>
 	</label>
 	<label class="radio">
 		<input type="radio" name="width_toggler" value="auto" id="width_toggler_auto" class="radio-input">
 		<span class="radio-label" style="right: 1px;">width: auto</span>
 	</label>
 	<div class="bar-wrapper"><div id="{{ ns }}_css" class="{{ ns }}_bar">CSS transitions</div></div>
-	<div class="bar-wrapper"><div id="{{ ns }}_fixed" class="{{ ns }}_bar">How it supposed to be<div class="border-overlay"></div></div></div>
+	<div class="bar-wrapper"><div id="{{ ns }}_fixed" class="{{ ns }}_bar">Expected<div class="border-overlay"></div></div></div>
 	<script>
 	(function() {
 		function jQueryLoaded() {
@@ -101,7 +102,7 @@ comments: true
 				} else {
 					$css.removeClass(AUTO);
 					$css.addClass(FIXED);
-					$fixed.transition({width: '300px'}, 500, 'in-out');
+					$fixed.transition({width: '200px'}, 500, 'in-out');
 				}
 			}
 
@@ -126,10 +127,10 @@ comments: true
 <p>I hope one day transitions to/from auto values will work out of the box in all major browsers. Meanwhile, read on.</p>
 <p>Bug reports for <a href="https://bugs.webkit.org/show_bug.cgi?id=16020">WebKit</a> and <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=571344">Firefox</a>.</p>
 <h2>From auto</h2>
-<div class="bar-wrap"><div class="snake {{ ns }}_bar" id="from-auto">
+<div class="bar-wrap wide-media"><div class="snake {{ ns }}_bar" id="from-auto">
 	<label class="radio">
 		<input type="radio" name="from_auto_toggler" onchange="fromAuto_run()" value="fixed" class="radio-input" checked>
-		<span class="radio-label l-dark" style="position: absolute; left: 199px; top: 7px">width: 300px</span>
+		<span class="radio-label l-dark" style="position: absolute; left: 95px; top: 7px">width: 200px</span>
 	</label>
 	<label class="radio">
 		<input type="radio" name="from_auto_toggler" onchange="fromAuto_reset()" value="fixed" class="radio-input" checked>
@@ -140,7 +141,7 @@ comments: true
 <pre><code>element.style.width = <a href="http://docs.webplatform.org/wiki/css/cssom/methods/getComputedStyle">getComputedStyle</a>(element).width
 element.style.transition = 'width .5s ease-in-out'
 element.offsetWidth // <a href="http://stackoverflow.com/a/3485654/16185">force repaint</a>
-element.style.width = '300px'
+element.style.width = '200px'
 </code></pre>
 <script>
 function setTransition(element, value) {
@@ -152,7 +153,7 @@ function fromAuto_run() {
 	element.style.width = getComputedStyle(element).width
 	element.offsetWidth; // force repaint
 	setTransition(element, 'width .5s ease-in-out')
-	element.style.width = '300px'
+	element.style.width = '200px'
 	setTimeout(function() {
 		setTransition(element, '')
 	}, 500);
@@ -164,30 +165,30 @@ function fromAuto_reset() {
 function toAuto_run() {
 	var element = document.getElementById('to-auto');
 	var prevWidth = element.style.width;
-	element.style.width = 'auto'
-	var endWidth = getComputedStyle(element).width
+	element.style.width = 'auto';
+	var endWidth = getComputedStyle(element).width;
 	element.style.width = prevWidth;
 	element.offsetWidth; // force repaint
-	setTransition(element, 'width .5s ease-in-out')
-	element.style.width = endWidth
+	setTransition(element, 'width .5s ease-in-out');
+	element.style.width = endWidth;
 	element.addEventListener('transitionend', function transitionEnd(event) {
 		if (event.propertyName == 'width') {
-			setTransition(element, '')
-			element.style.width = 'auto'
+			setTransition(element, '');
+			element.style.width = 'auto';
 			element.removeEventListener('transitionend', transitionEnd, false)
 		}
 	}, false)
 }
 function toAuto_reset() {
 	var element = document.getElementById('to-auto');
-	element.style.width = '300px';
+	element.style.width = '200px';
 }
 </script>
 <h2>To auto</h2>
-<div class="bar-wrap"><div class="snake {{ ns }}_bar" id="to-auto" style="width:300px">
+<div class="bar-wrap wide-media"><div class="snake {{ ns }}_bar" id="to-auto" style="width:200px">
 	<label class="radio">
 		<input type="radio" name="to_auto_toggler" onchange="toAuto_reset()" value="fixed" class="radio-input" checked>
-		<span class="radio-label l-dark" style="position: absolute; left: 199px; top: 7px">width: 300px</span>
+		<span class="radio-label l-dark" style="position: absolute; left: 95px; top: 7px">width: 200px</span>
 	</label>
 	<label class="radio">
 		<input type="radio" name="to_auto_toggler" onchange="toAuto_run()" value="fixed" class="radio-input">
@@ -215,7 +216,7 @@ element.addEventListener('<a href="http://docs.webplatform.org/wiki/tutorials/cs
 <p><a href="http://ricostacruz.com/jquery.transit">jquery.transit</a> is a jQuery plugin that provides neat JS API for creating animations using CSS transitions.</p>
 <p>I forked <a href="https://github.com/NV/jquery.transit">jquery.transit</a> to make it work with transitions from/to auto values.</p>
 <pre><code>element.transition({width: 'auto'}, 500, 'in-out')
-element.transition({width: '300px'}, 500, 'in-out')</code></pre>
+element.transition({width: '200px'}, 500, 'in-out')</code></pre>
 <h2 id="max-height">Pure CSS max-height (max-width) workaround</h2>
 <p>The most popular answer to "<a href="http://stackoverflow.com/questions/3508605/css-transition-height-0-to-height-auto">CSS transition height: 0; to height: auto;</a>" question on Stackoverflow is:</p>
 <blockquote cite="http://stackoverflow.com/a/8331169/16185">Use max-height in the transformation and not height. And set a value on max-height to something bigger than your box will ever get.</blockquote>
@@ -229,7 +230,7 @@ element.transition({width: '300px'}, 500, 'in-out')</code></pre>
 	width: 140px;
 }
 </style>
-<div class="bar-wrap" id="to-from-max-width_wrap"><div class="snake article_css-transition-to-from-auto_bar" id="to-from-max-width" style="max-width:4000px">
+<div class="bar-wrap wide-media" id="to-from-max-width_wrap"><div class="snake article_css-transition-to-from-auto_bar" id="to-from-max-width" style="max-width:4000px">
 	<label class="radio">
 		<input type="radio" name="max-width_toggler" onchange="maxWidth_toFixed()" value="fixed" class="radio-input">
 		<span class="radio-label l-dark" style="position: absolute; left: 5px; top: 7px">max-width: 160px</span>

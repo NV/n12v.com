@@ -1,0 +1,74 @@
+#article_2-way-data-binding h2 {
+	margin-top: 2em;
+	margin-bottom: 1em;
+}
+
+.temperature-converter,
+.temperature-converter input {
+	-webkit-font-smoothing: antialiased;
+	cursor: default;
+}
+
+.temperature-converter input {
+	width: 5em;
+	text-align: right;
+	border: none;
+	background: none;
+	color: inherit;
+	height: 2em;
+	vertical-align: baseline;
+	padding-right: .4em;
+}
+.temperature-converter .arrows {
+	font-size: 20px;
+	vertical-align: middle;
+}
+.temperature-converter input:focus {
+	outline: none;
+}
+.celsius-wrap,
+.fahrenheit-wrap {
+	display: inline-block;
+}
+.fahrenheit-wrap,
+.celsius-wrap {
+	border: 1px solid currentColor;
+	outline-color: currentColor;
+	padding: 0 4px 0 0;
+	border-radius: 4px;
+}
+
+.fahrenheit-wrap {
+	/*border-color: hsl(20, 44%, 53%);*/
+}
+.celsius-wrap {}
+
+
+#article_2-way-data-binding i {
+	color: #000
+}
+#article_2-way-data-binding .celsius-wrap,
+#article_2-way-data-binding i.celsius {
+	color: hsl(31, 100%, 30%);
+	background: hsl(46, 52%, 90%);
+}
+#article_2-way-data-binding .fahrenheit-wrap,
+#article_2-way-data-binding i.fahrenheit {
+	color: hsl(151, 60%, 30%);
+	background: hsl(151, 24%, 90%);
+}
+#article_2-way-data-binding .hover-highlight {
+	outline: 4px solid yellow;
+}
+#article_2-way-data-binding pre code {
+	color: hsl(0, 0%, 50%);
+}
+
+#article_2-way-data-binding input::-webkit-inner-spin-button {
+	font-size: 166%;
+	opacity: 1;
+}
+
+#article_2-way-data-binding .screencast {
+	margin-left: -5px;
+}

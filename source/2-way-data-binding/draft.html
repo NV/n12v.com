@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>MVC and two way data binding</title>
+	<meta name="viewport" content="width=640">
+	<meta name="author" content="Nikita Vasilyev">
+	<script>document.documentElement.className='js'</script>
+
+	<link href='http://n12v.dev/css/main.css' rel='stylesheet' type='text/css' />
+	<link href='mvc.css' rel='stylesheet' type='text/css' />
+	<script src="/js/debug.js"></script>
+</head>
+<body class="view-page view-page-done">
+<header id="top" class="vcard">
+	<a id="title" class="fn url" href="/">Nikita Vasilyev</a>
+	<span id="headline">&ndash; pronounced as Ni·ki&#769;·ta Va·si&#769;ll·ev</span>
+	<div id="about"></div>
+</header>
+<div id="content">
+
+<article id="article_2-way-data-bindings" class="hentry article-current" role="article">
+
+
+<h1 class="entry-title"><a class="entry-link" href="/mvc-and-two-way-data-binding/" rel="bookmark">
+	Two-Way Data Binding
+</a></h1>
+
+
+<div class="entry-content">
+
+	<div class="entry-excerpt">
+		<p>Let’s build a temperature converter app in Backbone, React, Angular, Meteor and vanilla JavaScript.</p>
+		<video preload autoplay loop width="216" height="48">
+			<source src="temperature-converter.webm" type="video/webm">
+			<source src="temperature-converter.mp4" type="video/mp4">
+			<source src="temperature-converter.ogv" type="video/ogg">
+		</video>
+		<h2>Vanilla JS</h2>
+
+		<p class="temperature-converter" id="tm-vanilla">
+			<label class="celsius-wrap"><input type="number" class="celsius" value="0">°C</label>
+			<span class="arrows">⇄</span>
+			<label class="fahrenheit-wrap"><input type="number" class="fahrenheit">°F</label>
+		</p>
+		<script src="vanilla.js"></script>
+
+		<p>Vanilla JS is our baseline. Input values are synchronised using two event handlers, one on every input field.</p>
+
+<pre><code>
+function <i>c2f</i>(<i class="celsius">c</i>) {
+	return <i>9/5 * <i class="celsius">c</i> + 32</i>
+}
+function <i>f2c</i>(<i class="fahrenheit">f</i>) {
+	return <i>5/9 * (<i class="fahrenheit">f</i> - 32)</i>
+}
+
+<i class="celsius">var celsius = document.getElementById('celsius')</i>
+<i class="fahrenheit">var fahrenheit = document.getElementById('fahrenheit')</i>
+<i class="fahrenheit">fahrenheit.value</i> = <i>c2f</i>(<i class="celsius">celsius.value</i>)
+
+<i class="celsius">celsius.oninput</i> = function(<i class="celsius">e</i>) {
+	<i class="fahrenheit">fahrenheit.value</i> = <i>c2f</i>(<i class="celsius">e.target.value</i>)
+};
+
+<i class="fahrenheit">fahrenheit.oninput</i> = function(<i class="fahrenheit">e</i>) {
+	<i class="celsius">celsius.value</i> = <i>f2c</i>(<i class="fahrenheit">e.target.value</i>)
+};
+</code></pre>
+
+		<h2>Backbone.js</h2>
+<p class="temperature-converter" id="tc-backbone">
+	<label class="celsius-wrap"><input type="number" class="celsius" value="0">°C</label>
+	<span class="arrows">⇄</span>
+	<label class="fahrenheit-wrap"><input type="number" class="fahrenheit">°F</label>
+</p>
+<pre><code>
+var <i>Temperature</i> = <i>Backbone.Model.extend</i>({
+	<i>defaults</i>: {
+		<i class="celsius">celsius: 0</i>
+	},
+	<i class="fahrenheit">fahrenheit</i>: function(<i class="fahrenheit">value</i>) {
+		if (typeof <i class="fahrenheit">value</i> == 'undefined') {
+			return <i>c2f</i>(<i class="celsius">this.get('celsius')</i>)
+		}
+		<i class="celsius">this.set('celsius', <i>f2c</i>(<i class="fahrenheit">value</i>))</i>
+	}
+});
+
+var <i>TemperatureView</i> = <i>Backbone</i>.<i>View</i>.<i>extend</i>({
+	<i>el</i>: <i>document</i>.<i>getElementById</i>(<i>'tc-backbone'</i>),
+	<i>model</i>: new <i>Temperature</i>(),
+	<i>events</i>: {
+		<i class="celsius">'input .celsius': 'updateCelsius'</i>,
+		<i class="fahrenheit">'input .fahrenheit': 'updateFahrenheit'</i>
+	},
+	<i>initialize</i>: function() {
+		this.<i>listenTo</i>(this.<i>model</i>, <i class="celsius">'change:celsius'</i>, this.<i>render</i>)
+		this.<i>render</i>()
+	},
+	<i>render</i>: function() {
+		<i class="celsius">this.$('.celsius').val(this.model.get('celsius'))</i>
+		<i class="fahrenheit">this.$('.fahrenheit').val(this.model.fahrenheit())</i>
+	},
+<i class="celsius">	updateCelsius: function(event) {
+		this.model.set('celsius', event.target.value)
+	}</i>,
+<i class="fahrenheit">	updateFahrenheit: function(event) {
+		this.model.fahrenheit(event.target.value)
+	}</i>
+})
+
+var <i>temperatureView</i> = new <i>TemperatureView</i>()
+</code></pre>
+
+		<p><code>Temperature</code> is our model. Note that it only stores °C values, it doesn’t store °F. We can always convert one two another so there is no need to store both.</p>
+
+		<h3 id="view-model-view">View&rarr;Model&rarr;View Blowback</h3>
+		<video preload autoplay loop width="94" height="42">
+			<source src="blowback.webm" type="video/webm">
+			<source src="blowback.mp4" type="video/mp4">
+			<source src="blowback.ogv" type="video/ogg">
+		</video>
+		<p>Changing value in the text field moves text cursor to the end.
+			The problem is that data flows from an input field to a model,
+			and then back to the same input field, overriding current value even if it’s exactly the same.</p>
+		<video preload autoplay loop width="320" height="180">
+			<source src="boomerang.webm" type="video/webm">
+			<source src="boomerang.mp4" type="video/mp4">
+			<source src="boomerang.ogv" type="video/ogg">
+			<p><a href="http://coub.com/view/1z2cv" rel="nofollow">Boomerang</a></p>
+		</video>
+		<p>There are <a href="http://stackoverflow.com/questions/15824887/backbone-js-avoid-viewmodelview-double-conversion">workarounds</a>.</p>
+
+		<h2 id="react">React.js</h2>
+		<div id="tm-react"><p class="temperature-converter"><label class="celsius-wrap"><input type="number" class="celsius" value="0"><span> C° </span></label><span class="arrows"> ⇄ </span><label class="fahrenheit-wrap"><input type="number" class="fahrenheit" value="32"><span> F° </span></label></p></div>
+<pre><code>var <i>TemperatureConverter</i> = <i>React.createClass</i>({
+	<i>getInitialState</i>: function() {
+		return {<i class="celsius">c: 0</i>}
+	},
+	<i>render</i>: function() {
+<i class="celsius">		var celciusValueLink = {
+			value: this.state.c.toString(),
+			requestChange: this.onCelsiusChange
+		}</i>
+<i class="fahrenheit">		var fahrenheitValueLink = {
+			value: c2f(<i class="celsius">this.state.c</i>).toString(),
+			requestChange: this.onFahrenheitChange
+		}</i>
+		return &lt;<i>div</i>&gt;
+			<i class="celsius">&lt;input type="number" valueLink={celciusValueLink}/&gt;°C</i>
+			&lt;<i>span</i>&gt; <i>⇄</i> &lt;/<i>span</i>&gt;
+			<i class="fahrenheit">&lt;input type="number" valueLink={fahrenheitValueLink}/&gt;°F</i>
+		&lt;/<i>div</i>&gt;
+	},
+<i class="celsius">	onCelsiusChange: function(data) {
+		this.setState({c: parseFloat(data)})
+	}</i>,
+<i class="fahrenheit">	onFahrenheitChange: function(data) {
+		this.setState({c: f2c(data)})
+	}</i>
+})
+
+<i>React.renderComponent</i>(
+	&lt;<i>TemperatureConverter</i>/&gt;,
+	<i>document.body</i>
+)</code></pre>
+		<p>React.js doesn’t have a Backbone’s problem. It has a notion of virtual DOM,
+		which is a layer between actual DOM and React’s state, it prevents React from unnecessary DOM changes.</p>
+		<p>However, here is another bug (Backbone has it too):</p>
+		<h3>Double Conversion</h3>
+		<video preload autoplay loop width="226">
+			<source src="floating_point.webm" type="video/webm">
+			<source src="floating_point.mp4" type="video/mp4">
+			<source src="floating_point.ogv" type="video/ogg">
+		</video>
+		<p>Instead of 2 we get 1.9999999999999964, because:</p>
+		<pre><code><i class="fahrenheit">c2f(<i class="celsius">f2c(<i class="fahrenheit">2</i>)</i>)</i> === <i class="fahrenheit">1.9999999999999964</i></code></pre>
+		<p>The problem is in the double conversion: Fahrenheits to Celsius, and then back to Fahrenheits.
+		In many programming languages, including JavaScript, floating point operations <a href="https://en.wikipedia.org/wiki/Floating_point#Accuracy_problems">aren’t necessary precise</a>:</p>
+		<pre><code><i>0.2 + 0.1 = 0.30000000000000004</i></code></pre>
+		<p>Ben Alpert, a core developer of React, suggested <a href="http://stackoverflow.com/questions/20796245/react-js-avoid-updates-of-currently-edited-input">two different solutions</a>.</p>
+		<h2 id="angular">Angular.js</h2>
+		<p class="temperature-converter" ng-app="temperature-converter">
+			<label class="celsius-wrap"><input type="number" class="celsius" ng-model="c">°C</label>
+			<span class="arrows">⇄</span>
+			<label class="fahrenheit-wrap"><input type="number" class="fahrenheit" ng-model="c" converter="c2f">°F</label>
+		</p>
+		<script src="angular.min.js"></script>
+		<script src="angular-mvc.js"></script>
+		<p>Angular.js doesn't have the problems mentioned previously since it doesn’t update the initiator input field whatsoever.</p>
+		<h3>HTML</h3>
+<pre><code>&lt;<i>div ng-app="temperature-converter"</i>&gt;
+	<i class="celsius">&lt;input type="number" ng-model="c"&gt;°C</i> <i>⇄</i>
+	<i class="fahrenheit">&lt;input type="number" ng-model="c" converter="c2f"&gt;°F</i>
+&lt;/<i>div</i>&gt;</code></pre>
+		<h3>JS</h3>
+<pre><code>var <i>app</i> = <i>angular.module</i>(<i>'temperature-converter'</i>, []);
+
+<i>app.directive</i>(<i>'converter'</i>, function(<i>converters</i>) {
+	return {
+		<i>require</i>: <i>'ngModel'</i>,
+		<i>link</i>: function(<i>scope</i>, <i>element</i>, <i>attr</i>, <i>ngModel</i>) {
+			var <i>converter</i> = <i>converters</i>[<i>attr.converter</i>]
+			<i>ngModel.$formatters.unshift</i>(<i class="fahrenheit">converter.formatter</i>)
+			<i>ngModel.$parsers.push</i>(<i class="celsius">converter.parser</i>)
+			<i class="celsius">$scope.c = 0</i>
+		}
+	}
+})
+
+<i>app.value</i>(<i>'converters'</i>, {
+	<i>c2f</i>: {
+		<i class="fahrenheit">formatter: c2f</i>,
+		<i class="celsius">parser: f2c</i>
+	}
+})
+</code></pre>
+		<!--<p><a href="http://embed.plnkr.co/QrEhKBVyVhTY4ef1FvOR/preview" rel="nofollow">http://embed.plnkr.co/QrEhKBVyVhTY4ef1FvOR</a></p>-->
+		<h2 id="meteor">Meteor</h2>
+		<p>Meteor, like Angular, doesn’t have mentioned problems either.</p>
+		<h3>HTML</h3>
+<pre><code>&lt;<i>body</i>&gt;
+	<i>{&#123;&gt; temperatureConverter}}</i>
+&lt;/<i>body</i>&gt;
+
+&lt;<i>template name="temperatureConverter"</i>&gt;
+	<i class="celsius">&lt;input type="number" value="{{celsius}}" class="celsius"&gt;°C</i> ⇄
+	<i class="fahrenheit">&lt;input type="number" value="{{fahrenheit}}" class="fahrenheit"&gt;°F</i>
+&lt;/<i>template</i>&gt;</code></pre>
+		<h3>JS</h3>
+<pre><code><i class="celsius">Session.setDefault('c', 0)</i>
+
+<i class="celsius">Template.temperatureConverter.celsius = function() {
+	return Session.get('c')
+};</i>
+<i class="fahrenheit">Template.temperatureConverter.fahrenheit = function() {
+	return c2f(<i class="celsius">Session.get('c')</i>)
+};</i>
+
+<i>Template.temperatureConverter.events</i>({
+<i class="celsius">	'input .celsius': function(e) {
+		Session.set('c', parseFloat(e.target.value))
+	}</i>,
+<i class="fahrenheit">	'input .fahrenheit': function(e) {
+		<i class="celsius">Session.set('c', f2c(<i class="fahrenheit">e.target.value</i>))</i>
+	}</i>
+})
+</code></pre>
+	<p>Demo: <a href="http://temperature.meteor.com/" rel="nofollow">temperature.meteor.com</a>.</p>
+	<h2>Summary</h2>
+	<p>Backbone does not support two-way data binding out of the box, it’s the only library here taht overwrites currently edited input field with the same value.</p>
+	<p>React’s virtual DOM works well in most cases but needs some massaging when dealing with floating point numbers.</p>
+	<p>Angular and Meteor work well out of the box.</p>
+	<p>Fortunately, none of the mentioned libraries go into infinite loop updating values back and forth between model and view.</p>
+	<hr>
+	<p>Syntax highlighting in the post is inspired by “<a href="https://medium.com/programming-ideas-tutorial-and-experience/coding-in-color-3a6db2743a1e">Coding in color: How to make syntax highlighting more useful</a>”.</p>
+	<p>Thanks to <a href="https://twitter.com/surjikal">Nick Porter</a> for helping with Angular and <a href="http://dybskiy.com/">Yuriy Dybskiy</a> for reviewing my Meteor code. <!--, and <a href="http://adamsolove.com/">Adam Solove</a> for copy editing the whole thing--></p>
+	</div>
+	<div class="entry-more entry-more-expanded">
+		<div class="meta vcard">
+			Published <time class="published" datetime="2014-05-29T00:00:00-07:00">May 29, 2014</time>
+			by <address class="fn">Nikita Vasilyev</address>
+
+		</div>
+
+		<div class="appendix">
+			<div class="comments"></div>
+		</div>
+
+
+	</div>
+
+</div>
+
+</article>
+
+</div>
+
+
+
+
+<script src="/js/jquery.js"></script>
+<script src="/js/jquery.lint.js"></script>
+
+<script src="lodash.js"></script>
+<script src="backbone.js"></script>
+<script src="mvc-backbone.js"></script>
+
+<script src="react.js"></script>
+<script src="JSXTransformer.js"></script>
+<script type="text/jsx" src="mvc-react.js"></script>
+
+<script src="/js/jquery.transit.js"></script>
+<script  src="/js/requestAnimationFrame.js"></script>
+
+<script src="/js/footer.js"></script>
+<!--<script src="/js/googleAnalytics.js"></script>-->
+</body>
+</html>
