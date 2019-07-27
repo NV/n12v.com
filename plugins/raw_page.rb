@@ -43,6 +43,11 @@ module Jekyll
     alias orig_write write
     def write
       orig_write
+
+      # Jekyll v3
+      #self.posts.docs.each do |page|
+
+      # Jekyll v1
       self.posts.each do |page|
         raw_page = RawPage.new(page)
         raw_page.render(self.layouts, site_payload)
