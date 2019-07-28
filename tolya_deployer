@@ -57,15 +57,6 @@ def deep_merge(first, second)
 end
 
 
-def is_newer(file_a, file_b)
-  time_a = File.mtime file_a
-  time_b = File.mtime file_b
-  result = time_a > time_b
-  info "is_newer -> #{result}\n  #{time_a} #{file_a}\n  #{time_b} #{file_b}"
-  return time_a > time_b
-end
-
-
 def all_files_in(directory)
   file_paths = []
   require 'find'
@@ -175,27 +166,6 @@ def gzip_and_replace(updated_files)
 end
 
 
-def remove_stale_gzip_files(stale_files)
-  stale_gzip_files = []
-  stale_files.each{|path|
-    build_file = File.join(STAGING, path)
-    if FileTest.exist?(build_file)
-      stale_gzip_files << build_file
-    end
-  }
-
-  if stale_gzip_files.empty?
-    info "No stale gzip files found."
-    return
-  end
-
-  puts "About to remove these files:\n  #{stale_gzip_files.join('  ')}"
-  ask_continue
-
-  FileUtils.rm(stale_gzip_files)
-end
-
-
 module Tolya
   def Tolya.production_config
     info "Merge _config.yml and production.yml into #{CONFIG}"
@@ -217,7 +187,6 @@ module Tolya
     system_run("rm #{PUBLIC}/min.js")
     system_run("jekyll build --config #{CONFIG}")
     system_run('rm -rf _asset_bundler_cache') # Asset bundler’s cache acts strange
-
     fix_modified_time('source', PUBLIC)
   end
 
@@ -273,10 +242,8 @@ module Tolya
       commit_message = "r#{commit_count.to_i + 1}"
       puts "About to commit #{commit_message}"
       ask_continue
-
       system_run 'git add .'
       system_run "git commit -m #{commit_message}"
-
       system_run 'git push backup --force'
     end
   end
@@ -321,12 +288,6 @@ else
     Tolya.jekyll
   when "gzip_and_upload"
     Tolya.gzip_and_upload
-  when "upload_file"
-    if ARGV[1].empty?
-      print_help
-    else
-      Tolya.upload_file ARGV[1]
-    end
   else
     $stderr.puts "Unknown arg '#{ARGV.first}'\n\n"
     print_help
