@@ -76,7 +76,8 @@ def all_files_in(directory)
       path.sub!(/^\.\//, '')
       if FileTest.directory?(path)
         first_char = File.basename(path)[0]
-        if first_char == '_' #or first_char == '.'
+        if first_char == '_' or (first_char == '.' and path.size > 1)
+          info "Ignored directory: #{path}"
           Find.prune # Don't look any further into this directory.
         else
           next
@@ -94,7 +95,7 @@ def fix_modified_time(source_dir, target_dir, verbose: false)
     # Fix modified time of generated files.
     # public/main.css should have modified time of source/main.css.
     # Currently, it has modified time of the last build.
-    info("Update 'modified' attributes for all files in #{target_dir}")
+    info("Update 'modified' attributes for all files in '#{target_dir}'")
 
     file_paths = all_files_in(target_dir)
 
@@ -222,53 +223,6 @@ module Tolya
     fix_modified_time('source', PUBLIC)
   end
 
-
-  # Deprecated. Use Tolya.gzip_and_upload instead.
-  def Tolya.gzip
-    # Only gzip newly added files and files with newer timestamp
-    public_files = all_files_in(PUBLIC)
-    gzip_files = all_files_in(BUILD_GZIP)
-
-    #TODO: This doesn't remove directories
-    gzip_files.each{|path|
-      if not public_files.include?(path)
-        gzip_file = File.join(BUILD_GZIP, path)
-        puts(ANSI.red{"Remove #{gzip_file}"})
-        #FIXME: Actually remove files.
-      end
-    }
-
-    modified_files = []
-    new_files = []
-
-    public_files.each{|path|
-      if gzip_files.include?(path)
-        public_file = File.join(PUBLIC, path)
-        gzip_file = File.join(BUILD_GZIP, path)
-        time_public = File.mtime public_file
-        time_gzip = File.mtime gzip_file
-        if time_gzip.to_i > time_public.to_i
-          warn "#{gzip_file} is newer than #{public_file}. How come?"
-          warn "  #{time_public} #{public_file}\n  #{time_gzip} #{gzip_file}"
-        elsif time_public.to_i > time_gzip.to_i
-          puts ANSI.green{"#{gzip_file} should be updated"}
-          puts ANSI.green{"  #{time_public} #{public_file}\n  #{time_gzip} #{gzip_file}"}
-          modified_files.push(path)
-        else
-          puts "#{path} not modified"
-        end
-      else
-        new_files.push(path)
-      end
-    }
-
-    gzip_and_replace(modified_files + new_files)
-
-    unless zipped.empty?
-      puts "Zipped:"
-      puts zipped
-    end
-  end
 
   # FIXME
   def Tolya.upload_file(path)
