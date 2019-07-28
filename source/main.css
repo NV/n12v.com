@@ -7,7 +7,8 @@ html {
   --mono: Consolas, Menlo, monospace;
 
   --content-width: 600px;
-  --gap: 8vw;
+  --left-gap: 8vw;
+  --right-gap: 6vw;
   --margin-bottom: .75em;
 
   --duration: .2s;
@@ -175,8 +176,8 @@ a:active {
 }
 
 #top, .entry-title, .entry-excerpt, .entry-more {
-  padding-left: var(--gap);
-  padding-right: var(--gap);
+  padding-left: var(--left-gap);
+  padding-right: var(--right-gap);
 }
 
 article {
@@ -353,10 +354,10 @@ article {
 
 .full-width, .appendix {
   box-sizing: content-box;
-  padding-left: var(--gap);
-  padding-right: var(--gap);
+  padding-left: var(--left-gap);
+  padding-right: var(--right-gap);
   width: 100%;
-  margin-left: calc(-1 * var(--gap))
+  margin-left: calc(-1 * var(--left-gap))
 }
 
 .appendix {
@@ -392,7 +393,7 @@ article {
 .js .image-toggle-max {
   cursor: zoom-out;
   cursor: -webkit-zoom-out;
-  margin-left: calc(-1 * var(--gap));
+  margin-left: calc(-1 * var(--left-gap));
 }
 
 video {
@@ -438,14 +439,18 @@ hr {
 }
 
 @media (max-width: 400px) {
+  html {
+    --left-gap: 5vw;
+    --right-gap: 4vw;
+  }
   .wide-media {
-    margin-left: calc(-1 * var(--gap)) !important;
-    width: calc(100% + 2 * var(--gap)) !important;
+    margin-left: calc(-1 * var(--left-gap)) !important;
+    width: calc(100% + var(--left-gap) + var(--right-gap)) !important;
   }
   .js .image-toggle {
-    margin-left: calc(-1 * var(--gap));
+    margin-left: calc(-1 * var(--left-gap));
   }
   .js .image-toggle-min {
-    max-width: calc(100% + 2 * var(--gap)) !important;
+    max-width: calc(100% + var(--left-gap) + var(--right-gap)) !important;
   }
 }
