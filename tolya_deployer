@@ -10,10 +10,8 @@
 ##   gem install jekyll ansi
 
 
-
-PUBLIC = 'public'         # Jekyll build dir. Duplicated in _config.yml.
-BUILD = 'build'           # Un-gzipped source
-BUILD_GZIP = 'build_gzip' # Gzipped files, ready to upload
+PUBLIC = 'public'   # Jekyll build dir. Keep up to date with _config.yml.
+STAGING = 'staging' # Gzipped files, ready to upload.
 
 HOST = 'n12v.com'
 CONFIG = '_production.yml'
@@ -144,7 +142,7 @@ end
 
 def gzip_and_replace_one(path)
   public_file = File.join(PUBLIC, path)
-  build_file = File.join(BUILD_GZIP, path)
+  build_file = File.join(STAGING, path)
   system_run("zopfli --i30 -v -c #{public_file} > #{build_file}")
 
   size_orig = File.size(public_file)
@@ -165,7 +163,7 @@ def gzip_and_replace(updated_files)
     didZip = gzip_and_replace_one(path)
     if didZip
       public_file = File.join(PUBLIC, path)
-      build_file = File.join(BUILD_GZIP, path)
+      build_file = File.join(STAGING, path)
       modified_time_copy(public_file, build_file)
     else
       not_zipped << path
@@ -180,7 +178,7 @@ end
 def remove_stale_gzip_files(stale_files)
   stale_gzip_files = []
   stale_files.each{|path|
-    build_file = File.join(BUILD_GZIP, path)
+    build_file = File.join(STAGING, path)
     if FileTest.exist?(build_file)
       stale_gzip_files << build_file
     end
@@ -224,19 +222,6 @@ module Tolya
   end
 
 
-  # FIXME
-  def Tolya.upload_file(path)
-    public_prefix = PUBLIC + '/'
-    if !path.start_with?(public_prefix)
-      $stderr.puts "Path must starts with #{public_prefix}"
-      exit 1
-    end
-
-    build_path = path.sub(public_prefix, BUILD + '/')
-
-    is_newer(path, build_path)
-  end
-
   def Tolya.gzip_and_upload
     deleted = []
     added = []
@@ -272,7 +257,7 @@ module Tolya
     ask_continue do
       # --cf-invalidate doesn't work in S3cmd v2.0.2 https://github.com/s3tools/s3cmd/issues/1046
       delete_removed_flag = deleted.empty? ? "" : "--delete-removed"
-      system_run("./vendor/s3cmd/s3cmd sync --verbose --no-mime-magic --cf-invalidate --acl-public --no-preserve #{delete_removed_flag} ./#{BUILD_GZIP}/ s3://#{HOST}/")
+      system_run("./vendor/s3cmd/s3cmd sync --verbose --no-mime-magic --cf-invalidate --acl-public --no-preserve #{delete_removed_flag} ./#{STAGING}/ s3://#{HOST}/")
       # --dry-run
 
       new_files.each{|path|
