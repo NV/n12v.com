@@ -5,6 +5,7 @@
 ##   tolya_deployer production_config
 ##   tolya_deployer jekyll
 ##   tolya_deployer gzip_and_upload
+##   tolya_deployer superfeedr_ping
 ##
 ## Dependencies:
 ##   gem install jekyll ansi
@@ -248,6 +249,18 @@ module Tolya
     end
   end
 
+  def Tolya.superfeedr_ping
+    # Do the pubsubhubbub thing.
+    require 'net/http'
+    puts 'POST n12v.superfeedr.com'
+    res = Net::HTTP.post_form(URI.parse('https://n12v.superfeedr.com/'), {
+        'hub.mode' => 'publish',
+        'hub.url' => 'https://n12v.com/posts.atom'
+    })
+    puts "#{res.code} #{res.message}"
+    puts res.body
+  end
+
 end
 
 
@@ -288,6 +301,8 @@ else
     Tolya.jekyll
   when "gzip_and_upload"
     Tolya.gzip_and_upload
+  when "superfeedr_ping"
+    Tolya.superfeedr_ping
   else
     $stderr.puts "Unknown arg '#{ARGV.first}'\n\n"
     print_help
