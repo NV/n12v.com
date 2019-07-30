@@ -226,6 +226,7 @@ module Tolya
     puts "Upload new files to s3://#{HOST}?"
     ask_continue do
       # --cf-invalidate doesn't work in S3cmd v2.0.2 https://github.com/s3tools/s3cmd/issues/1046
+      # At ./vendor/s3cmd/s3cmd and have a copy of the latest version from the s3cmd repository.
       delete_removed_flag = deleted.empty? ? "" : "--delete-removed"
       system_run("./vendor/s3cmd/s3cmd sync --verbose --no-mime-magic --cf-invalidate --acl-public --no-preserve #{delete_removed_flag} ./#{STAGING}/ s3://#{HOST}/")
       # --dry-run
