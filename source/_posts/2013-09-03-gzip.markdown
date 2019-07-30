@@ -3,6 +3,7 @@ layout: post
 title: "Gzip"
 date: 2013-09-03 18:11
 comments: true
+private: true
 ---
 
 Gzip reduces the file size by compressing repeating sequences of bytes.
