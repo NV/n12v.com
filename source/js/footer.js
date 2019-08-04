@@ -68,7 +68,10 @@ $('body').on('click', '#title, .entry-link', function(e) {
 
 
 function setTitle(link) {
-	document.title = cache[link.href];
+	if (typeof link !== "string") {
+		link = link.href;
+	}
+	document.title = cache[link];
 }
 
 function stripHash(link) {
@@ -331,6 +334,7 @@ cache[location.href] = document.title;
  */
 function fetch(url, success, fail) {
 	function fetched(elements) {
+		setTitle(url);
 		success(elements);
 	}
 
@@ -357,7 +361,6 @@ function fetch(url, success, fail) {
 		});
 
 		cache[url] = title;
-
 		fetched(elements);
 
 	}).fail(fail);
