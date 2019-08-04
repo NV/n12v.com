@@ -48,7 +48,7 @@ var prevPath = stripHash(location);
 $(window).on('popstate', function(e) {
 	// WebKit and Blink call popstate event on page load, Firefox doesn't.
 	if (prevPath !== stripHash(location)) {
-		route(location, onLocationChange);
+		route(location, true, onLocationChange);
 	}
 });
 
@@ -58,7 +58,7 @@ $('body').on('click', '#title, .entry-link', function(e) {
 		e.preventDefault();
 		var link = this;
 
-		route(link, function() {
+		route(link, false, function() {
 			pushState(link);
 			setTitle(link);
 			onLocationChange();
@@ -138,12 +138,12 @@ function getScrollableRoot() {
 
 /**
  * @param {Location|HTMLAnchorElement} link
+ * @param {boolean} isFromBrowserButtons
  * @param {Function} success
  */
-function route(link, success) {
-
-	if ($(link).hasClass('entry-force-reload')) {
-		location.assign(link.href);
+function route(link, isFromBrowserButtons, success) {
+	if ($(link).hasClass('entry-force-reload') || isFromBrowserButtons && isIOSWebKit()) {
+		fail();
 		return;
 	}
 
@@ -331,9 +331,7 @@ cache[location.href] = document.title;
  */
 function fetch(url, success, fail) {
 	function fetched(elements) {
-		//setTimeout(function() {
-			success(elements);
-		//}, 200);
+		success(elements);
 	}
 
 	if (cache.hasOwnProperty(url)) {
@@ -485,6 +483,14 @@ function isPlainClick(event) {
 
 	return true;
 }
+
+function isIOSWebKit() {
+	var ua = window.navigator.userAgent;
+	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
+	var webkit = !!ua.match(/WebKit/i);
+	return iOS && webkit;
+}
+
 
 $('body').on('click', 'video', function(e) {
 	var video = e.target;
