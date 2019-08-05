@@ -48,7 +48,7 @@ var prevPath = stripHash(location);
 $(window).on('popstate', function(e) {
 	// WebKit and Blink call popstate event on page load, Firefox doesn't.
 	if (prevPath !== stripHash(location)) {
-		route(location, true, onLocationChange);
+		route(location, onLocationChange);
 	}
 });
 
@@ -57,9 +57,9 @@ $('body').on('click', '#title, .entry-link', function(e) {
 	if (isPlainClick(e)) {
 		e.preventDefault();
 		var link = this;
+		pushState(link);
 
-		route(link, false, function() {
-			pushState(link);
+		route(link, function() {
 			setTitle(link);
 			onLocationChange();
 		});
@@ -141,11 +141,10 @@ function getScrollableRoot() {
 
 /**
  * @param {Location|HTMLAnchorElement} link
- * @param {boolean} isFromBrowserButtons
  * @param {Function} success
  */
-function route(link, isFromBrowserButtons, success) {
-	if ($(link).hasClass('entry-force-reload') || isFromBrowserButtons && isIOSWebKit()) {
+function route(link, success) {
+	if ($(link).hasClass('entry-force-reload')) {
 		fail();
 		return;
 	}
