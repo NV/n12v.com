@@ -15,7 +15,7 @@ window['imageToggle'] = function(image) {
 (function() {
 
 var OPENING_ANIMATION_DURATION = 200; // Keep in sync with $duration in main.css.scss :(
-var TIMEOUT = 2000;
+var TIMEOUT = 4000;
 
 window.onerror = function(message, url, line, col, err) {
 	if (!window.ga || (!url && !line)) {
