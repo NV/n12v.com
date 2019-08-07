@@ -1,0 +1,6 @@
+title: Nikita Vasilyev (dev)
+destination: dev
+dev: true
+
+asset_bundler:
+  dev: true

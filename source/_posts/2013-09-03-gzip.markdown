@@ -33,7 +33,7 @@ The compressed file is 20 bytes larger; Gzip metadata accounts for the additiona
 
 ## When to use Gzip?
 
-The [deploy script](https://github.com/NV/n12v.com/blob/master/Rakefile) for this website gzips every file
+The [deploy script](https://github.com/NV/n12v.com/blob/master/tolya_deployer) for this website gzips every file
 and compares the resulting file’s size to the original’s. When the result is larger, it keeps the original.
 
 Gzip improved file size for almost all text files (JS, CSS, HTML):

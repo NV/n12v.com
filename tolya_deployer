@@ -2,10 +2,10 @@
 
 ## Usage:
 ##   tolya_deployer all
-##   tolya_deployer production_config
 ##   tolya_deployer jekyll
 ##   tolya_deployer gzip_and_upload
-##   tolya_deployer superfeedr_ping
+##
+##   tolya_deployer dev_config
 ##
 ## Dependencies:
 ##   gem install jekyll ansi
@@ -15,7 +15,7 @@ PUBLIC = 'public'   # Jekyll build dir. Keep up to date with _config.yml.
 STAGING = 'staging' # Gzipped files, ready to upload.
 
 HOST = 'n12v.com'
-CONFIG = '_production.yml'
+CONFIG = '_config.yml'
 
 # Files to gzip
 EXTENSIONS = %w{
@@ -168,21 +168,6 @@ end
 
 
 module Tolya
-  def Tolya.production_config
-    info "Merge _config.yml and production.yml into #{CONFIG}"
-
-    require 'yaml'
-    config = YAML.load_file('_config.yml')
-    production = YAML.load_file('production.yml')
-    yaml = deep_merge(config, production).to_yaml
-    File.open(CONFIG, 'w') {|f|
-      f.write(yaml)
-    }
-
-    system_run("jekyll doctor --config #{CONFIG}")
-  end
-
-
   def Tolya.jekyll
     info("Build Jekyll from source/ to #{PUBLIC}/")
     system_run("rm #{PUBLIC}/min.js")
@@ -250,6 +235,22 @@ module Tolya
     end
   end
 
+
+  def Tolya.dev_config
+    info "Merge #{CONFIG} and _dev_config.yml into dev_config.yml"
+
+    require 'yaml'
+    config = YAML.load_file(CONFIG)
+    dev = YAML.load_file('_dev_config.yml')
+    yaml = deep_merge(config, dev).to_yaml
+    File.open('dev_config.yml', 'w') {|f|
+      f.write(yaml)
+    }
+
+    system_run("jekyll doctor --config dev_config.yml")
+  end
+
+
   def Tolya.superfeedr_ping
     # Do the pubsubhubbub thing.
     require 'net/http'
@@ -293,15 +294,14 @@ if $stdin.tty? and ARGV.empty? or ARGV.delete'-h' or ARGV.delete'--help'
 else
   case ARGV.first
   when "all"
-    Tolya.production_config
     Tolya.jekyll
     Tolya.gzip_and_upload
-  when "production_config"
-    Tolya.production_config
   when "jekyll"
     Tolya.jekyll
   when "gzip_and_upload"
     Tolya.gzip_and_upload
+  when "dev_config"
+    Tolya.dev_config
   when "superfeedr_ping"
     Tolya.superfeedr_ping
   else

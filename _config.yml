@@ -17,7 +17,7 @@ pygments: false
 
 excerpt_separator: '<!-- more -->'
 
-dev: true
+dev: false
 
 # Used only for JS
 asset_bundler:
@@ -31,5 +31,5 @@ asset_bundler:
   base_path: /
   cdn:
   remove_bundled: true
-  dev: true
+  dev: false
   bundle_name: 'min'
