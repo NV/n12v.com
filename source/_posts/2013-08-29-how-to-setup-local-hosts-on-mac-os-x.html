@@ -18,7 +18,7 @@ comments: true
 <code>ln -s ~/Sites/usercss/www ~/.pow/usercss/public</code></pre>
 <!-- more -->
 <h2>The hard way: /etc/hosts and Apache</h2>
-<p>Open /etc/hosts in <a href="http://www.sublimetext.com/" rel="nofollow">Sublime</a> or your favourite text editor and add:</p>
+<p>Open /etc/hosts in <a href="https://www.sublimetext.com/" rel="nofollow">Sublime</a> or your favourite text editor and add:</p>
 <pre><code>127.0.0.1	n12v.dev
 fe80::1%lo0	n12v.dev</code></pre>
 <p><code>fe80::1%lo0</code> is an IPv6 address. Without it your local site might <a href="http://serverfault.com/questions/321386/resolving-to-virtual-host-very-slow-on-mac-os-x-lion">run too slow</a>.</p>

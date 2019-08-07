@@ -138,9 +138,9 @@ comments: true
 	</label>
 	&nbsp;
 </div></div>
-<pre><code>element.style.width = <a href="http://docs.webplatform.org/wiki/css/cssom/methods/getComputedStyle">getComputedStyle</a>(element).width
+<pre><code>element.style.width = getComputedStyle(element).width
 element.style.transition = 'width .5s ease-in-out'
-element.offsetWidth // <a href="http://stackoverflow.com/a/3485654/16185">force repaint</a>
+element.offsetWidth // <a href="https://stackoverflow.com/a/3485654/16185">force repaint</a>
 element.style.width = '200px'
 </code></pre>
 <script>
@@ -203,7 +203,7 @@ element.style.width = prevWidth
 element.offsetWidth // force repaint
 element.style.transition = 'width .5s ease-in-out'
 element.style.width = endWidth
-element.addEventListener('<a href="http://docs.webplatform.org/wiki/tutorials/css_transitions#The_transitionend_event">transitionend</a>', function transitionEnd(event) {
+element.addEventListener('<a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/transitionend_event">transitionend</a>', function transitionEnd(event) {
 	if (event.propertyName == 'width') {
 		element.style.transition = ''
 		element.style.width = 'auto'
@@ -218,7 +218,7 @@ element.addEventListener('<a href="http://docs.webplatform.org/wiki/tutorials/cs
 <pre><code>element.transition({width: 'auto'}, 500, 'in-out')
 element.transition({width: '200px'}, 500, 'in-out')</code></pre>
 <h2 id="max-height">Pure CSS max-height (max-width) workaround</h2>
-<p>The most popular answer to "<a href="http://stackoverflow.com/questions/3508605/css-transition-height-0-to-height-auto">CSS transition height: 0; to height: auto;</a>" question on Stackoverflow is:</p>
+<p>The most popular answer to "<a href="https://stackoverflow.com/q/3508605/16185">CSS transition height: 0; to height: auto;</a>" question on Stackoverflow is:</p>
 <blockquote cite="http://stackoverflow.com/a/8331169/16185">Use max-height in the transformation and not height. And set a value on max-height to something bigger than your box will ever get.</blockquote>
 <style>
 #to-from-max-width {
