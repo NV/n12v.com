@@ -14,7 +14,7 @@ window['imageToggle'] = function(image) {
 
 (function() {
 
-var OPENING_ANIMATION_DURATION = 200; // Keep in sync with $duration in main.css.scss :(
+var OPENING_ANIMATION_DURATION = 200; // Keep in sync with --duration in main.css :(
 var TIMEOUT = 4000;
 
 window.onerror = function(message, url, line, col, err) {
@@ -225,9 +225,9 @@ function route(link, success) {
 						// Happens when we switch back to the home page before transition ends
 						return;
 					}
-					more.css('max-height', '');
 					setViewImmediately(VIEW.PAGE);
 					getScrollableRoot().scrollTop = $('#top').outerHeight() + 1;
+					more.css('max-height', '');
 					loadDisqus();
 					done();
 				} else {
