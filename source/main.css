@@ -23,7 +23,7 @@ html, body {
 }
 
 body {
-  font: 87.5%/1.5 Verdana, "Helvetica Neue", Arial, sans-serif;
+  font: 14px/1.5 Verdana, "Helvetica Neue", Arial, sans-serif;
   background: var(--bg);
   color: var(--text-color);
   tab-size: 2;
@@ -217,6 +217,16 @@ article {
 .view-page-done #title {
   display: block;
   padding: .6em var(--right-gap) .6em var(--left-gap);
+}
+
+.view-page-done #title:hover,
+.view-page-done #title:active {
+  background: hsl(215, 82%, 92%);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.view-page-done #title:focus {
+  outline-offset: -3px;
 }
 
 .view-home-done .entry-more {
