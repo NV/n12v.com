@@ -4,10 +4,25 @@ This website built using [Jekyll](http://jekyllrb.com/) version 1.x.
 
 ## Run locally
 
+### Inspall Ruby 2.3
+
+This version of Jekyll requires yajl-ruby 1.1.0, which doesn't compile on Ruby 2.4+.
+
+Install Ruby 2.3 with [rbenv](https://github.com/rbenv/rbenv):
+
+    brew install rbenv
+    rbenv init
+    rbenv install 2.3.8
+    echo 'status --is-interactive; and source (rbenv init -|psub)' >> ~/.config/fish/config.fish
+
+Close and reopen Fish shell session.
+
+### Install Bundler
+
 	gem update --system
 	gem install bundler
 
-Run:
+### Install all dependencies
 
     n12v.com ➤ bundle install
     n12v.com ➤ bundle exec jekyll serve --watch
