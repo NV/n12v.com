@@ -213,13 +213,13 @@ module Tolya
       # --cf-invalidate doesn't work in S3cmd v2.0.2 https://github.com/s3tools/s3cmd/issues/1046
       # At ./vendor/s3cmd/s3cmd and have a copy of the latest version from the s3cmd repository.
       delete_removed_flag = deleted.empty? ? "" : "--delete-removed"
-      system_run("./vendor/s3cmd/s3cmd sync --verbose --no-mime-magic --cf-invalidate --acl-public --no-preserve #{delete_removed_flag} ./#{STAGING}/ s3://#{HOST}/")
+      system_run("s3cmd sync --verbose --no-mime-magic --cf-invalidate --acl-public --no-preserve #{delete_removed_flag} ./#{STAGING}/ s3://#{HOST}/")
       # --dry-run
 
       new_files.each{|path|
         next if unzipped.include? path
         remote_path = File.join(HOST, path)
-        system_run("./vendor/s3cmd/s3cmd modify --add-header='Content-Encoding: gzip' --verbose --acl-public --no-mime-magic --no-preserve s3://#{remote_path}")
+        system_run("s3cmd modify --add-header='Content-Encoding: gzip' --verbose --acl-public --no-mime-magic --no-preserve s3://#{remote_path}")
         # --dry-run
       }
     end
