@@ -4,9 +4,48 @@ This website built using [Jekyll](http://jekyllrb.com/) version 1.x.
 
 ## Run locally
 
-### Install Ruby 2.3
+### Install Ruby 2.3.8
 
 This version of Jekyll requires yajl-ruby 1.1.0, which doesn't compile on Ruby 2.4+.
+
+#### Mac, Apple M-chip
+
+Rbenv didn't work for me. Use [asdf](https://asdf-vm.com/) instead.
+
+    brew install asdf
+    asdf plugin add ruby
+
+Reinstall the current versions of openssl, readline and ruby-build in order to have the latest versions and configs:
+
+    brew uninstall --ignore-dependencies readline
+    brew uninstall --ignore-dependencies openssl
+    brew uninstall --ignore-dependencies ruby-build
+    rm -rf /opt/homebrew/etc/openssl@1.1
+    brew install -s readline
+    brew install -s openssl
+    brew install -s ruby-build
+
+In your shell config .bashrc or .zshrc add the following ENV variables:
+
+    export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.0)"
+    export LDFLAGS="-L/opt/homebrew/opt/readline/lib:$LDFLAGS"
+    export CPPFLAGS="-I/opt/homebrew/opt/readline/include:$CPPFLAGS"
+    export PKG_CONFIG_PATH="/opt/homebrew/opt/readline/lib/pkgconfig:$PKG_CONFIG_PATH"
+    export optflags="-Wno-error=implicit-function-declaration"
+    export LDFLAGS="-L/opt/homebrew/opt/libffi/lib:$LDFLAGS"
+    export CPPFLAGS="-I/opt/homebrew/opt/libffi/include:$CPPFLAGS"
+    export PKG_CONFIG_PATH="/opt/homebrew/opt/libffi/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+Finally, install Ruby:
+
+    asdf reshim ruby
+    asdf install ruby 2.3.8
+    asdf local ruby 2.3.8
+    asdf global ruby system
+
+Insturctions from https://stackoverflow.com/questions/69012676/install-older-ruby-versions-on-a-m1-macbook
+
+#### Mac, Intel chip
 
 Install Ruby 2.3 with [rbenv](https://github.com/rbenv/rbenv):
 
@@ -19,18 +58,19 @@ Close and reopen Fish shell session.
 
 ### Install Bundler
 
-	gem update --system
-	gem install bundler
+    gem update --system
+    gem install bundler
 
 ### Install all dependencies
 
-    n12v.com ➤ bundle install
-    n12v.com ➤ bundle exec jekyll serve --watch
+    bundle install
+    bundle exec jekyll serve --watch --port 4012
 
 ### Install s3cmd
 
-	cd vendor/s3cmd
-	sudo python setup.py install
+    cd vendor/s3cmd
+    sudo python setup.py install
+
 
 ## Deploy on Amazon S3 and Cloudfront
 
